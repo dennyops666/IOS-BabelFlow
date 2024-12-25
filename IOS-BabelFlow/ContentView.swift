@@ -75,6 +75,37 @@ struct ContentView: View {
                     performTranslation()
                 }
             
+            HStack(spacing: 4) {
+                Spacer()
+                Button(action: {
+                    speakTranslatedText(inputText, language: sourceLanguage)
+                }) {
+                    Image(systemName: "speaker.wave.2.fill")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .help("Speak Input")
+                Button(action: {
+                    if isPaused {
+                        speechSynthesizer.continueSpeaking()
+                    } else {
+                        speechSynthesizer.pauseSpeaking(at: .immediate)
+                    }
+                    isPaused.toggle()
+                }) {
+                    Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .help(isPaused ? "Continue Speech" : "Pause Speech")
+                Button(action: {
+                    speechSynthesizer.stopSpeaking(at: .immediate)
+                }) {
+                    Image(systemName: "stop.fill")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .help("Stop Speech")
+            }
+            .padding(.trailing, 20) // Move buttons slightly left from the right edge
+            
             HStack {
                 Picker("Source Language", selection: $sourceLanguage) {
                     ForEach(languages, id: \ .self) {
@@ -111,40 +142,37 @@ struct ContentView: View {
                 .border(Color.gray, width: 1)
                 .padding()
                 .disabled(true)
-                .overlay(
-                    VStack {
-                        Spacer()
-                        HStack(spacing: 4) {
-                            Spacer(minLength: 60) // Further adjust spacer to move buttons left
-                            Button(action: {
-                                speakTranslatedText(translatedText, language: targetLanguage)
-                            }) {
-                                Image(systemName: "speaker.wave.2.fill")
-                            }
-                            .buttonStyle(BorderlessButtonStyle())
-                            .help("Speak Translation")
-                            Button(action: {
-                                if isPaused {
-                                    speechSynthesizer.continueSpeaking()
-                                } else {
-                                    speechSynthesizer.pauseSpeaking(at: .immediate)
-                                }
-                                isPaused.toggle()
-                            }) {
-                                Image(systemName: isPaused ? "play.fill" : "pause.fill")
-                            }
-                            .buttonStyle(BorderlessButtonStyle())
-                            .help(isPaused ? "Continue Speech" : "Pause Speech")
-                            Button(action: {
-                                speechSynthesizer.stopSpeaking(at: .immediate)
-                            }) {
-                                Image(systemName: "stop.fill")
-                            }
-                            .buttonStyle(BorderlessButtonStyle())
-                            .help("Stop Speech")
-                        }
+
+            HStack(spacing: 4) {
+                Spacer()
+                Button(action: {
+                    speakTranslatedText(translatedText, language: targetLanguage)
+                }) {
+                    Image(systemName: "speaker.wave.2.fill")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .help("Speak Translation")
+                Button(action: {
+                    if isPaused {
+                        speechSynthesizer.continueSpeaking()
+                    } else {
+                        speechSynthesizer.pauseSpeaking(at: .immediate)
                     }
-                )
+                    isPaused.toggle()
+                }) {
+                    Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .help(isPaused ? "Continue Speech" : "Pause Speech")
+                Button(action: {
+                    speechSynthesizer.stopSpeaking(at: .immediate)
+                }) {
+                    Image(systemName: "stop.fill")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .help("Stop Speech")
+            }
+            .padding(.trailing, 20) // Move buttons two spaces further right
 
             Button("Copy Translation") {
                 UIPasteboard.general.string = translatedText
