@@ -61,17 +61,31 @@ struct ContentView: View {
                 .font(.largeTitle)
                 .padding()
             
-            TextEditor(text: $inputText)
-                .frame(height: 100)
-                .border(Color.gray, width: 1)
-                .padding()
-                .onTapGesture {
-                    // Dismiss keyboard
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            VStack {
+                ZStack(alignment: .topTrailing) {
+                    TextEditor(text: $inputText)
+                        .frame(height: 100)
+                        .border(Color.gray, width: 1)
+                        .padding()
+                        .onTapGesture {
+                            // Dismiss keyboard
+                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                        }
+                        .onChange(of: inputText) { _ in
+                            performTranslation()
+                        }
+                    Button(action: {
+                        inputText = ""
+                        translatedText = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .help("Clear Text")
+                    .padding(.trailing, 20)
+                    .padding(.top, 20)
                 }
-                .onChange(of: inputText) { _ in
-                    performTranslation()
-                }
+            }
             
             HStack(spacing: 4) {
                 Spacer()
@@ -135,12 +149,16 @@ struct ContentView: View {
                 .font(.headline)
                 .padding(.top)
             
-            TextEditor(text: $translatedText)
-                .frame(height: 100)
-                .border(Color.gray, width: 1)
-                .padding()
-                .disabled(true)
-
+            VStack {
+                ZStack {
+                    TextEditor(text: $translatedText)
+                        .frame(height: 100)
+                        .border(Color.gray, width: 1)
+                        .padding()
+                        .disabled(true)
+                }
+            }
+            
             HStack(spacing: 4) {
                 Spacer()
                 Button(action: {
