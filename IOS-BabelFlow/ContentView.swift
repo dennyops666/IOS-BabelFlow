@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var targetLanguage: String = UserDefaults.standard.string(forKey: "defaultTargetLanguage") ?? "English"
     @State private var isLoading: Bool = false
     @State private var isPaused: Bool = false
+    @State private var showCopySuccessMessage: Bool = false
     
     let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
     
@@ -137,8 +138,17 @@ struct ContentView: View {
             }
             .padding()
 
-            Button("Translate") {
+            Button(action: {
                 performTranslation()
+            }) {
+                Text("Translate")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .cornerRadius(10)
+                    .shadow(radius: 5)
             }
             .padding()
             
@@ -152,7 +162,7 @@ struct ContentView: View {
                 .padding(.top)
             
             VStack {
-                ZStack {
+                ZStack(alignment: .topTrailing) {
                     ScrollView {
                         Text(translatedText)
                             .padding()
@@ -161,6 +171,19 @@ struct ContentView: View {
                     .frame(minHeight: 100, maxHeight: 200)
                     .border(Color.gray, width: 1)
                     .padding()
+
+                    Button(action: {
+                        UIPasteboard.general.string = translatedText
+                        showCopySuccessMessage = true
+                    }) {
+                        Image(systemName: "doc.on.doc")
+                            .foregroundColor(.blue)
+                            .padding()
+                    }
+                    .offset(x: -10, y: 10)
+                }
+                .alert(isPresented: $showCopySuccessMessage) {
+                    Alert(title: Text("复制成功"), message: Text("翻译内容已复制到剪贴板。"), dismissButton: .default(Text("确定")))
                 }
             }
             
@@ -194,11 +217,6 @@ struct ContentView: View {
                 .help("Stop Speech")
             }
             .padding(.trailing, 20) // Move buttons two spaces further right
-
-            Button("Copy Translation") {
-                UIPasteboard.general.string = translatedText
-            }
-            .padding()
 
             Spacer()
         }
