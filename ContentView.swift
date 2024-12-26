@@ -63,17 +63,19 @@ struct ContentView: View {
             
             VStack {
                 ZStack(alignment: .topTrailing) {
-                    TextEditor(text: $inputText)
-                        .frame(height: 100)
-                        .border(Color.gray, width: 1)
-                        .padding()
-                        .onTapGesture {
-                            // Dismiss keyboard
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                        }
-                        .onChange(of: inputText) { _ in
-                            performTranslation()
-                        }
+                    ScrollView {
+                        TextEditor(text: $inputText)
+                            .frame(minHeight: 100, maxHeight: 200)
+                            .border(Color.gray, width: 1)
+                            .padding()
+                            .onTapGesture {
+                                // Dismiss keyboard
+                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                            }
+                            .onChange(of: inputText) { _ in
+                                performTranslation()
+                            }
+                    }
                     Button(action: {
                         inputText = ""
                         translatedText = ""
@@ -151,11 +153,14 @@ struct ContentView: View {
             
             VStack {
                 ZStack {
-                    TextEditor(text: $translatedText)
-                        .frame(height: 100)
-                        .border(Color.gray, width: 1)
-                        .padding()
-                        .disabled(true)
+                    ScrollView {
+                        Text(translatedText)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(minHeight: 100, maxHeight: 200)
+                    .border(Color.gray, width: 1)
+                    .padding()
                 }
             }
             
