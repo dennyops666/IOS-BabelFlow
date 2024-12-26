@@ -14,7 +14,6 @@ struct ContentView: View {
     @State private var sourceLanguage: String = UserDefaults.standard.string(forKey: "defaultSourceLanguage") ?? "Auto"
     @State private var targetLanguage: String = UserDefaults.standard.string(forKey: "defaultTargetLanguage") ?? "English"
     @State private var isLoading: Bool = false
-    @State private var translationHistory: [(input: String, output: String)] = []
     @State private var isPaused: Bool = false
     
     let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
@@ -35,7 +34,6 @@ struct ContentView: View {
             DispatchQueue.main.async {
                 translatedText = result ?? "Translation failed. Please check your internet connection or try again later."
                 isLoading = false
-                translationHistory.append((input: inputText, output: translatedText))
             }
         }
     }
@@ -63,17 +61,31 @@ struct ContentView: View {
                 .font(.largeTitle)
                 .padding()
             
-            TextEditor(text: $inputText)
-                .frame(height: 100)
-                .border(Color.gray, width: 1)
-                .padding()
-                .onTapGesture {
-                    // Dismiss keyboard
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            VStack {
+                ZStack(alignment: .topTrailing) {
+                    TextEditor(text: $inputText)
+                        .frame(height: 100)
+                        .border(Color.gray, width: 1)
+                        .padding()
+                        .onTapGesture {
+                            // Dismiss keyboard
+                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                        }
+                        .onChange(of: inputText) { _ in
+                            performTranslation()
+                        }
+                    Button(action: {
+                        inputText = ""
+                        translatedText = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .help("Clear Text")
+                    .padding(.trailing, 20)
+                    .padding(.top, 20)
                 }
-                .onChange(of: inputText) { _ in
-                    performTranslation()
-                }
+            }
             
             HStack(spacing: 4) {
                 Spacer()
@@ -137,12 +149,16 @@ struct ContentView: View {
                 .font(.headline)
                 .padding(.top)
             
-            TextEditor(text: $translatedText)
-                .frame(height: 100)
-                .border(Color.gray, width: 1)
-                .padding()
-                .disabled(true)
-
+            VStack {
+                ZStack {
+                    TextEditor(text: $translatedText)
+                        .frame(height: 100)
+                        .border(Color.gray, width: 1)
+                        .padding()
+                        .disabled(true)
+                }
+            }
+            
             HStack(spacing: 4) {
                 Spacer()
                 Button(action: {
@@ -176,21 +192,6 @@ struct ContentView: View {
 
             Button("Copy Translation") {
                 UIPasteboard.general.string = translatedText
-            }
-            .padding()
-
-            Text("Translation History:")
-                .font(.headline)
-                .padding(.top)
-            
-            List(translationHistory, id: \ .input) { entry in
-                VStack(alignment: .leading) {
-                    Text("Input: \(entry.input)")
-                        .font(.subheadline)
-                    Text("Output: \(entry.output)")
-                        .font(.subheadline)
-                }
-                .padding(.vertical, 4)
             }
             .padding()
 
