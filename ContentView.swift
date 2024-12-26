@@ -16,14 +16,12 @@ struct ContentView: View {
     @State private var isLoading: Bool = false
     @State private var isPaused: Bool = false
     @State private var showCopySuccessMessage: Bool = false
-    @State private var isRecording: Bool = false
     
     let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
     
     let translationService = TranslationService(apiKey: ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? "")
     
     let speechSynthesizer = AVSpeechSynthesizer()
-    let audioRecorder = AVAudioRecorder()
     
     private func performTranslation() {
         guard !inputText.isEmpty else {
@@ -120,19 +118,6 @@ struct ContentView: View {
                 }
                 .buttonStyle(BorderlessButtonStyle())
                 .help("Stop Speech")
-                Button(action: {
-                    if audioRecorder.isRecording {
-                        audioRecorder.stop()
-                    } else {
-                        audioRecorder.record()
-                    }
-                    isRecording.toggle()
-                }) {
-                    Image(systemName: isRecording ? "stop.circle.fill" : "mic.circle.fill")
-                        .foregroundColor(isRecording ? .red : .blue)
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .help(isRecording ? "Stop Recording" : "Start Recording")
             }
             .padding(.trailing, 20) // Move buttons slightly left from the right edge
             
@@ -177,60 +162,62 @@ struct ContentView: View {
                 .padding(.top)
             
             VStack {
-                ScrollView {
-                    Text(translatedText)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                }
-                .frame(minHeight: 150, idealHeight: 150)
-                .border(Color.gray, width: 1)
-                .cornerRadius(8)
-                Spacer()
-                HStack(spacing: 10) {
-                    Spacer()
+                ZStack(alignment: .topTrailing) {
+                    ScrollView {
+                        Text(translatedText)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(minHeight: 100, maxHeight: 200)
+                    .border(Color.gray, width: 1)
+                    .padding()
+
                     Button(action: {
                         UIPasteboard.general.string = translatedText
                         showCopySuccessMessage = true
                     }) {
                         Image(systemName: "doc.on.doc")
                             .foregroundColor(.blue)
+                            .padding()
                     }
-                    .alert(isPresented: $showCopySuccessMessage) {
-                        Alert(title: Text("复制成功"), message: Text("翻译内容已复制到剪贴板。"), dismissButton: .default(Text("确定")))
-                    }
-
-                    Button(action: {
-                        speakTranslatedText(translatedText, language: targetLanguage)
-                    }) {
-                        Image(systemName: "speaker.wave.2.fill")
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .help("Speak Translation")
-
-                    Button(action: {
-                        if isPaused {
-                            speechSynthesizer.continueSpeaking()
-                        } else {
-                            speechSynthesizer.pauseSpeaking(at: .immediate)
-                        }
-                        isPaused.toggle()
-                    }) {
-                        Image(systemName: isPaused ? "play.fill" : "pause.fill")
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .help(isPaused ? "Continue Speech" : "Pause Speech")
-
-                    Button(action: {
-                        speechSynthesizer.stopSpeaking(at: .immediate)
-                    }) {
-                        Image(systemName: "stop.fill")
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .help("Stop Speech")
+                    .offset(x: -10, y: 10)
                 }
-                .padding(5)
+                .alert(isPresented: $showCopySuccessMessage) {
+                    Alert(title: Text("复制成功"), message: Text("翻译内容已复制到剪贴板。"), dismissButton: .default(Text("确定")))
+                }
             }
             
+            HStack(spacing: 4) {
+                Spacer()
+                Button(action: {
+                    speakTranslatedText(translatedText, language: targetLanguage)
+                }) {
+                    Image(systemName: "speaker.wave.2.fill")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .help("Speak Translation")
+                Button(action: {
+                    if isPaused {
+                        speechSynthesizer.continueSpeaking()
+                    } else {
+                        speechSynthesizer.pauseSpeaking(at: .immediate)
+                    }
+                    isPaused.toggle()
+                }) {
+                    Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .help(isPaused ? "Continue Speech" : "Pause Speech")
+                Button(action: {
+                    speechSynthesizer.stopSpeaking(at: .immediate)
+                }) {
+                    Image(systemName: "stop.fill")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .help("Stop Speech")
+            }
+            .padding(.trailing, 20) // Move buttons two spaces further right
+
             Spacer()
         }
         .padding()
