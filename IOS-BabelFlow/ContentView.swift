@@ -17,6 +17,8 @@ struct ContentView: View {
     @State private var isPaused: Bool = false
     @State private var showCopySuccessMessage: Bool = false
     
+    @StateObject private var themeManager = ThemeManager()
+    
     let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
     
     let translationService = TranslationService(apiKey: ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? "")
@@ -58,9 +60,20 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
+            HStack {
+                Button(action: {
+                    themeManager.toggleTheme()
+                }) {
+                    Image(systemName: themeManager.currentTheme == .light ? "moon.fill" : "sun.max.fill")
+                        .foregroundColor(.blue)
+                }
+                .padding()
+                Spacer()
+            }
             Text("BabelFlow Translator")
                 .font(.largeTitle)
                 .padding()
+                .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
             
             VStack {
                 ZStack(alignment: .topTrailing) {
@@ -77,6 +90,7 @@ struct ContentView: View {
                                 performTranslation()
                             }
                     }
+                    .background(themeManager.currentTheme == .light ? Color.white : Color.black)
                     Button(action: {
                         inputText = ""
                         translatedText = ""
@@ -171,7 +185,7 @@ struct ContentView: View {
                     .frame(minHeight: 100, maxHeight: 200)
                     .border(Color.gray, width: 1)
                     .padding()
-
+                    .background(themeManager.currentTheme == .light ? Color.white : Color.black)
                     Button(action: {
                         UIPasteboard.general.string = translatedText
                         showCopySuccessMessage = true
@@ -220,6 +234,8 @@ struct ContentView: View {
 
             Spacer()
         }
+        .background(themeManager.currentTheme == .light ? Color.white : Color.black)
+        .animation(.easeInOut, value: themeManager.currentTheme)
         .padding()
     }
 }
