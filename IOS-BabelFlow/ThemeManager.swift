@@ -1,14 +1,27 @@
 import SwiftUI
 
-enum Theme {
-    case light
-    case dark
-}
-
 class ThemeManager: ObservableObject {
-    @Published var currentTheme: Theme = .light
+    @Published private(set) var colorScheme: ColorScheme = .light
+    
+    @AppStorage("isDarkMode") private var isDarkMode = false {
+        didSet {
+            updateColorScheme()
+        }
+    }
+    
+    init() {
+        updateColorScheme()
+    }
+    
+    private func updateColorScheme() {
+        colorScheme = isDarkMode ? .dark : .light
+    }
     
     func toggleTheme() {
-        currentTheme = (currentTheme == .light) ? .dark : .light
+        isDarkMode.toggle()
+    }
+    
+    func setTheme(_ isDark: Bool) {
+        isDarkMode = isDark
     }
 }

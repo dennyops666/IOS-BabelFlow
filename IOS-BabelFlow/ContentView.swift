@@ -9,433 +9,438 @@ import SwiftUI
 import AVFoundation
 
 struct ContentView: View {
-    @State private var inputText: String = "Please enter text to translate."
-    @State private var translatedText: String = ""
-    @State private var sourceLanguage: String = UserDefaults.standard.string(forKey: "defaultSourceLanguage") ?? "Auto"
-    @State private var targetLanguage: String = UserDefaults.standard.string(forKey: "defaultTargetLanguage") ?? "English"
-    @State private var isLoading: Bool = false
-    @State private var isPaused: Bool = false
-    @State private var showCopySuccessMessage: Bool = false
+    @State private var inputText = ""
+    @State private var translatedText = ""
+    @State private var sourceLanguage = UserDefaults.standard.string(forKey: "defaultSourceLanguage") ?? "Auto"
+    @State private var targetLanguage = UserDefaults.standard.string(forKey: "defaultTargetLanguage") ?? "English"
+    @State private var isLoading = false
+    @State private var isPaused = false
+    @State private var showCopySuccessMessage = false
     @State private var showAPIKeySettings = false
     @State private var showAPIKeyAlert = false
-    
-    @StateObject private var themeManager = ThemeManager()
+    @State private var lastTranslationTask: Task<Void, Never>?
+    @Binding var useCustomAPIKey: Bool
     
     let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
+    let speechSynthesizer = AVSpeechSynthesizer()
     
     private var translationService: TranslationService {
         TranslationService(apiKey: KeychainManager.shared.getAPIKey() ?? "")
     }
     
-    let speechSynthesizer = AVSpeechSynthesizer()
-    
-    init() {
-        UIScrollView.appearance().indicatorStyle = .black
-    }
-    
-    private func performTranslation() {
-        guard !inputText.isEmpty else {
-            translatedText = "Please enter text to translate."
-            return
-        }
+    func translate() {
+        guard !inputText.isEmpty else { return }
         
-        guard let _ = KeychainManager.shared.getAPIKey() else {
-            showAPIKeyAlert = true
-            return
-        }
+        // Cancel any ongoing translation
+        lastTranslationTask?.cancel()
         
         isLoading = true
-        let source = sourceLanguage == "Auto" ? "" : sourceLanguage
-        translationService.translate(text: inputText, from: source, to: targetLanguage) { result in
-            DispatchQueue.main.async {
-                if let translatedResult = result {
-                    translatedText = translatedResult
-                } else {
-                    translatedText = "Translation failed. Please check your internet connection or API Key."
+        lastTranslationTask = Task {
+            do {
+                let result = try await translationService.translateText(
+                    inputText,
+                    from: sourceLanguage,
+                    to: targetLanguage
+                )
+                
+                if !Task.isCancelled {
+                    translatedText = result
                 }
+            } catch {
+                if !Task.isCancelled {
+                    translatedText = "Translation failed: \(error.localizedDescription)"
+                }
+            }
+            if !Task.isCancelled {
                 isLoading = false
             }
         }
     }
     
-    func speakTranslatedText(_ text: String, language: String) {
-        // Map language names to language codes
-        let languageCode: String
-        switch language.lowercased() {
-        case "korean":
-            languageCode = "ko-KR"
-        case "russian":
-            languageCode = "ru-RU"
-        default:
-            languageCode = language // Use the provided language if not Korean or Russian
-        }
-        
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: languageCode)
-        speechSynthesizer.speak(utterance)
-    }
-    
     var body: some View {
-        VStack {
-            HStack {
-                Button(action: {
-                    themeManager.toggleTheme()
-                }) {
-                    Image(systemName: themeManager.currentTheme == .light ? "moon.fill" : "sun.max.fill")
-                        .foregroundColor(.blue)
-                }
-                .padding()
-                Spacer()
-            }
-            Text("BabelFlow Translator")
-                .font(.largeTitle)
-                .padding()
-                .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
-            
-            VStack {
-                ZStack(alignment: .topTrailing) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 0)
-                            .fill(themeManager.currentTheme == .light ? Color.white : Color.black)
-                            .border(Color.gray, width: 1)
-                        
-                        TextEditor(text: $inputText)
-                            .frame(minHeight: 100, maxHeight: 200)
-                            .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
-                            .scrollContentBackground(.hidden)
-                            .onChange(of: inputText) { _ in
-                                performTranslation()
-                            }
-                            .onSubmit {
-                                performTranslation()
-                            }
-                            .onAppear {
-                                UITextView.appearance().indicatorStyle = .black
-                            }
-                    }
-                    .padding()
-                    
-                    Button(action: {
-                        inputText = ""
-                        translatedText = ""
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .help("Clear Text")
-                    .padding(.trailing, 25)
-                    .padding(.top, 15)
-                }
-                .padding(.horizontal)
-
-                if isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: themeManager.currentTheme == .light ? Color.black : Color.white))
-                        .padding(.vertical, 5)
-                }
-
-                HStack(spacing: 4) {
-                    Spacer()
-                    Button(action: {
-                        speakTranslatedText(inputText, language: sourceLanguage)
-                    }) {
-                        Image(systemName: "speaker.wave.2.fill")
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .help("Speak Input")
-                    Button(action: {
-                        if isPaused {
-                            speechSynthesizer.continueSpeaking()
-                        } else {
-                            speechSynthesizer.pauseSpeaking(at: .immediate)
+        VStack(spacing: 20) {
+            // Language Selection
+            HStack(spacing: 4) {
+                Menu {
+                    Picker("Source Language", selection: $sourceLanguage) {
+                        ForEach(languages, id: \.self) { language in
+                            Text(language).tag(language)
                         }
-                        isPaused.toggle()
-                    }) {
-                        Image(systemName: isPaused ? "play.fill" : "pause.fill")
                     }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .help(isPaused ? "Continue Speech" : "Pause Speech")
-                    Button(action: {
-                        speechSynthesizer.stopSpeaking(at: .immediate)
-                    }) {
-                        Image(systemName: "stop.fill")
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .help("Stop Speech")
+                } label: {
+                    Text(sourceLanguage)
+                        .foregroundColor(.blue)
+                        .frame(minWidth: 80, alignment: .leading)
                 }
-                .padding(.trailing, 20)
-            }
-            
-            HStack {
-                Picker("Source Language", selection: $sourceLanguage) {
-                    ForEach(languages, id: \ .self) {
-                        Text($0)
-                    }
-                }
-                .pickerStyle(MenuPickerStyle())
                 
                 Button(action: {
-                    swapLanguages()
+                    let temp = sourceLanguage
+                    sourceLanguage = targetLanguage
+                    targetLanguage = temp
+                    if !translatedText.isEmpty {
+                        let tempText = inputText
+                        inputText = translatedText
+                        translatedText = tempText
+                    }
                 }) {
                     Image(systemName: "arrow.left.arrow.right")
                         .foregroundColor(.blue)
                 }
-                .padding(.horizontal)
+                .frame(width: 40)
                 
-                Picker("Target Language", selection: $targetLanguage) {
-                    ForEach(languages.dropFirst(), id: \ .self) {
-                        Text($0)
+                Menu {
+                    Picker("Target Language", selection: $targetLanguage) {
+                        ForEach(languages.dropFirst(), id: \.self) { language in
+                            Text(language).tag(language)
+                        }
                     }
+                } label: {
+                    Text(targetLanguage)
+                        .foregroundColor(.blue)
+                        .frame(minWidth: 80, alignment: .leading)
                 }
-                .pickerStyle(MenuPickerStyle())
-            }
-            .padding()
-
-            Button(action: {
-                performTranslation()
-            }) {
-                Text("Translate")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .cornerRadius(10)
-                    .shadow(radius: 5)
-            }
-            .padding()
-            .alert(isPresented: $showAPIKeyAlert) {
-                Alert(
-                    title: Text("API Key Required"),
-                    message: Text("Please set your OpenAI API Key in the settings to use the translation feature."),
-                    primaryButton: .default(Text("Set API Key")) {
-                        showAPIKeySettings = true
-                    },
-                    secondaryButton: .cancel()
-                )
-            }
-            .sheet(isPresented: $showAPIKeySettings) {
-                APIKeySettingsView()
             }
             
-            Text("Translated Text:")
-                .font(.headline)
-                .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
-                .padding(.top)
-                
-            ZStack(alignment: .topTrailing) {
-                ScrollView {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 0)
-                            .fill(themeManager.currentTheme == .light ? Color.white : Color.black)
-                            .border(Color.gray, width: 1)
+            // Input Area
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Please enter text to translate.")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    Spacer()
+                    HStack(spacing: 8) {
+                        Button(action: {
+                            if !inputText.isEmpty {
+                                speakText(inputText, language: sourceLanguage)
+                            }
+                        }) {
+                            Image(systemName: "speaker.wave.2")
+                                .foregroundColor(.blue)
+                        }
+                        .disabled(inputText.isEmpty)
                         
-                        Text(translatedText)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .frame(minHeight: 100, maxHeight: 200)
-                            .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
-                            .padding()
+                        Button(action: {
+                            if isPaused {
+                                speechSynthesizer.continueSpeaking()
+                            } else {
+                                speechSynthesizer.pauseSpeaking(at: .immediate)
+                            }
+                            isPaused.toggle()
+                        }) {
+                            Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                                .foregroundColor(.blue)
+                        }
+                        .disabled(inputText.isEmpty)
+                        
+                        Button(action: {
+                            speechSynthesizer.stopSpeaking(at: .immediate)
+                            isPaused = false
+                        }) {
+                            Image(systemName: "stop.fill")
+                                .foregroundColor(.blue)
+                        }
+                        .disabled(inputText.isEmpty)
+                        
+                        Button(action: {
+                            speechSynthesizer.stopSpeaking(at: .immediate)
+                            isPaused = false
+                            inputText = ""
+                            translatedText = ""
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.gray)
+                        }
                     }
                 }
-                .onAppear {
-                    UIScrollView.appearance().indicatorStyle = .black
-                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 
-                Button(action: {
-                    UIPasteboard.general.string = translatedText
-                    showCopySuccessMessage = true
-                }) {
-                    Image(systemName: "doc.on.doc")
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .help("Copy Translation")
-                .padding(.trailing, 25)
-                .padding(.top, 15)
-            }
-            .padding(.horizontal)
-            .alert(isPresented: $showCopySuccessMessage) {
-                Alert(title: Text("复制成功"), message: Text("翻译内容已复制到剪贴板。"), dismissButton: .default(Text("确定")))
-            }
-            
-            HStack(spacing: 4) {
-                Spacer()
-                Button(action: {
-                    speakTranslatedText(translatedText, language: targetLanguage)
-                }) {
-                    Image(systemName: "speaker.wave.2.fill")
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .help("Speak Translation")
-                Button(action: {
-                    if isPaused {
-                        speechSynthesizer.continueSpeaking()
-                    } else {
-                        speechSynthesizer.pauseSpeaking(at: .immediate)
+                TextEditor(text: $inputText)
+                    .frame(height: 180)
+                    .padding(10)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(10)
+                    .onChange(of: inputText) { newValue in
+                        // Auto translate after 0.5 seconds of no typing
+                        Task {
+                            try? await Task.sleep(nanoseconds: 500_000_000)
+                            translate()
+                        }
                     }
-                    isPaused.toggle()
-                }) {
-                    Image(systemName: isPaused ? "play.fill" : "pause.fill")
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .help(isPaused ? "Continue Speech" : "Pause Speech")
-                Button(action: {
-                    speechSynthesizer.stopSpeaking(at: .immediate)
-                }) {
-                    Image(systemName: "stop.fill")
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .help("Stop Speech")
+                    .onSubmit {
+                        // Translate when return key is pressed
+                        translate()
+                    }
             }
-            .padding(.trailing, 20)
-
-            Spacer()
+            .background(Color(UIColor.systemBackground))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+            )
+            
+            // Translate Button
+            Button(action: translate) {
+                HStack {
+                    if isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    }
+                    Text("Translate")
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+            }
+            .disabled(inputText.isEmpty || isLoading)
+            
+            // Translation Result
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Translation")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    Spacer()
+                    if !translatedText.isEmpty {
+                        HStack(spacing: 8) {
+                            Button(action: {
+                                speakText(translatedText, language: targetLanguage)
+                            }) {
+                                Image(systemName: "speaker.wave.2")
+                                    .foregroundColor(.blue)
+                            }
+                            
+                            Button(action: {
+                                if isPaused {
+                                    speechSynthesizer.continueSpeaking()
+                                } else {
+                                    speechSynthesizer.pauseSpeaking(at: .immediate)
+                                }
+                                isPaused.toggle()
+                            }) {
+                                Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                                    .foregroundColor(.blue)
+                            }
+                            
+                            Button(action: {
+                                speechSynthesizer.stopSpeaking(at: .immediate)
+                                isPaused = false
+                            }) {
+                                Image(systemName: "stop.fill")
+                                    .foregroundColor(.blue)
+                            }
+                            
+                            Button(action: {
+                                UIPasteboard.general.string = translatedText
+                                showCopySuccessMessage = true
+                            }) {
+                                Image(systemName: "doc.on.doc")
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                
+                ScrollView {
+                    Text(translatedText.isEmpty ? "Translation will appear here" : translatedText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .foregroundColor(translatedText.isEmpty ? .gray : .primary)
+                }
+                .frame(height: 180)
+                .background(Color(UIColor.systemGray6))
+                .cornerRadius(10)
+            }
+            .background(Color(UIColor.systemBackground))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+            )
         }
-        .background(themeManager.currentTheme == .light ? Color.white : Color.black)
-        .animation(.easeInOut, value: themeManager.currentTheme)
         .padding()
-        .alert(isPresented: $showAPIKeyAlert) {
-            Alert(title: Text("API Key Required"), message: Text("Please enter your OpenAI API Key in the settings."), dismissButton: .default(Text("OK")) {
-                showAPIKeySettings = true
-            })
-        }
-        .sheet(isPresented: $showAPIKeySettings) {
-            NavigationView {
-                APIKeySettingsView()
-            }
+        .alert("Copy Success", isPresented: $showCopySuccessMessage) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Translation has been copied to clipboard")
         }
     }
     
-    private func swapLanguages() {
-        let temp = sourceLanguage
-        sourceLanguage = targetLanguage
-        targetLanguage = temp
+    func speakText(_ text: String, language: String) {
+        guard !text.isEmpty else { return }
+        
+        speechSynthesizer.stopSpeaking(at: .immediate)
+        let utterance = AVSpeechUtterance(string: text)
+        
+        // 如果是自动检测语言，默认使用英语
+        let languageCode = language == "Auto" ? "en-US" : getLanguageCode(for: language)
+        utterance.voice = AVSpeechSynthesisVoice(language: languageCode)
+        utterance.rate = 0.5  // 设置语速
+        utterance.pitchMultiplier = 1.0  // 设置音调
+        utterance.volume = 1.0  // 设置音量
+        
+        speechSynthesizer.speak(utterance)
+    }
+    
+    func getLanguageCode(for language: String) -> String {
+        switch language {
+        case "English": return "en-US"
+        case "Chinese": return "zh-CN"
+        case "Spanish": return "es-ES"
+        case "French": return "fr-FR"
+        case "German": return "de-DE"
+        case "Japanese": return "ja-JP"
+        case "Korean": return "ko-KR"
+        case "Russian": return "ru-RU"
+        case "Italian": return "it-IT"
+        case "Portuguese": return "pt-PT"
+        default: return "en-US"
+        }
     }
 }
 
+// MARK: - Settings View
+struct SettingsView: View {
+    @AppStorage("defaultSourceLanguage") private var defaultSourceLanguage = "Auto"
+    @AppStorage("defaultTargetLanguage") private var defaultTargetLanguage = "English"
+    @State private var showAPIKeySettings = false
+    @Binding var useCustomAPIKey: Bool
+    @EnvironmentObject private var themeManager: ThemeManager
+    
+    let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
+    
+    var body: some View {
+        Form {
+            Section(header: Text("DEFAULT LANGUAGES")) {
+                Picker("Source Language", selection: $defaultSourceLanguage) {
+                    ForEach(languages, id: \.self) { language in
+                        Text(language).tag(language)
+                    }
+                }
+                
+                Picker("Target Language", selection: $defaultTargetLanguage) {
+                    ForEach(languages.dropFirst(), id: \.self) { language in
+                        Text(language).tag(language)
+                    }
+                }
+            }
+            
+            Section(header: Text("API SETTINGS")) {
+                Toggle("Use Custom API Key", isOn: $useCustomAPIKey)
+                    .onChange(of: useCustomAPIKey) { newValue in
+                        if newValue && !KeychainManager.shared.hasCustomAPIKey() {
+                            showAPIKeySettings = true
+                        }
+                    }
+                
+                HStack {
+                    Text("API Key Status")
+                    Spacer()
+                    Text(useCustomAPIKey ? "Using Custom API Key" : "Using Default API Key")
+                        .foregroundColor(.gray)
+                }
+                
+                if useCustomAPIKey {
+                    Button("Set API Key", action: {
+                        showAPIKeySettings = true
+                    })
+                    .foregroundColor(.blue)
+                }
+            }
+            
+            Section(header: Text("APPEARANCE")) {
+                Toggle("Dark Mode", isOn: Binding(
+                    get: { themeManager.colorScheme == .dark },
+                    set: { themeManager.setTheme($0) }
+                ))
+            }
+        }
+        .navigationTitle("Settings")
+        .sheet(isPresented: $showAPIKeySettings) {
+            APIKeySettingsView(useCustomAPIKey: $useCustomAPIKey)
+        }
+    }
+}
+
+// MARK: - API Key Settings View
 struct APIKeySettingsView: View {
+    @Environment(\.presentationMode) var presentationMode
+    @Binding var useCustomAPIKey: Bool
     @State private var apiKey: String = ""
     @State private var showAlert = false
+    @State private var alertTitle = ""
     @State private var alertMessage = ""
-    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView {
-            Form {
-                Section(header: Text("OpenAI API Key")) {
-                    SecureField("Enter API Key", text: $apiKey)
-                        .onAppear {
-                            // 加载已保存的 API Key
-                            if let savedKey = KeychainManager.shared.getAPIKey() {
-                                apiKey = savedKey
-                            }
-                        }
-                    
-                    Button("Save API Key") {
-                        if KeychainManager.shared.saveAPIKey(apiKey) {
-                            alertMessage = "API Key saved successfully"
-                            showAlert = true
-                        } else {
-                            alertMessage = "Failed to save API Key"
-                            showAlert = true
-                        }
-                    }
-                    .disabled(apiKey.isEmpty)
-                }
+            VStack(spacing: 20) {
+                Text("OpenAI API Key")
+                    .font(.headline)
                 
-                Section {
+                SecureField("Enter API Key", text: $apiKey)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal)
+                
+                Button("Save API Key") {
+                    if KeychainManager.shared.saveAPIKey(apiKey) {
+                        alertTitle = "Success"
+                        alertMessage = "API Key saved successfully"
+                        useCustomAPIKey = true
+                        showAlert = true
+                    } else {
+                        alertTitle = "Error"
+                        alertMessage = "Failed to save API Key"
+                        showAlert = true
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                
+                if KeychainManager.shared.hasCustomAPIKey() {
                     Button("Clear API Key") {
+                        apiKey = ""
                         if KeychainManager.shared.deleteAPIKey() {
-                            apiKey = ""
+                            alertTitle = "Success"
                             alertMessage = "API Key cleared successfully"
+                            useCustomAPIKey = false
                             showAlert = true
                         } else {
+                            alertTitle = "Error"
                             alertMessage = "Failed to clear API Key"
                             showAlert = true
                         }
                     }
                     .foregroundColor(.red)
                 }
+                
+                Spacer()
             }
-            .navigationTitle("API Key Settings")
+            .padding()
+            .navigationBarTitle("API Key Settings", displayMode: .inline)
             .navigationBarItems(trailing: Button("Done") {
                 presentationMode.wrappedValue.dismiss()
             })
             .alert(isPresented: $showAlert) {
                 Alert(
-                    title: Text("Notice"),
+                    title: Text(alertTitle),
                     message: Text(alertMessage),
                     dismissButton: .default(Text("OK")) {
-                        if alertMessage.contains("successfully") && alertMessage.contains("cleared") {
+                        if alertTitle == "Success" {
                             presentationMode.wrappedValue.dismiss()
                         }
                     }
                 )
             }
-        }
-    }
-}
-
-struct SettingsView: View {
-    @AppStorage("defaultSourceLanguage") private var defaultSourceLanguage = "Auto"
-    @AppStorage("defaultTargetLanguage") private var defaultTargetLanguage = "English"
-    @State private var showAPIKeySettings = false
-    @State private var useCustomAPIKey = KeychainManager.shared.isUsingCustomKey()
-    
-    var body: some View {
-        Form {
-            Section(header: Text("Default Languages")) {
-                Picker("Source Language", selection: $defaultSourceLanguage) {
-                    Text("Auto").tag("Auto")
-                    ForEach(["English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"], id: \.self) { language in
-                        Text(language).tag(language)
-                    }
-                }
-                
-                Picker("Target Language", selection: $defaultTargetLanguage) {
-                    ForEach(["English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"], id: \.self) { language in
-                        Text(language).tag(language)
-                    }
+            .onAppear {
+                if KeychainManager.shared.hasCustomAPIKey(),
+                   let savedKey = KeychainManager.shared.getAPIKey() {
+                    apiKey = savedKey
                 }
             }
-            
-            Section(header: Text("API Settings")) {
-                Toggle("Use Custom API Key", isOn: Binding(
-                    get: { useCustomAPIKey },
-                    set: { newValue in
-                        useCustomAPIKey = newValue
-                        KeychainManager.shared.setUseCustomKey(newValue)
-                        if !newValue {
-                            // 如果切换到使用默认 Key，删除自定义的 Key
-                            _ = KeychainManager.shared.deleteAPIKey()
-                        }
-                    }
-                ))
-                
-                if useCustomAPIKey {
-                    Button("Set Custom API Key") {
-                        showAPIKeySettings = true
-                    }
-                } else {
-                    Text("Using Default API Key")
-                        .foregroundColor(.gray)
-                }
-            }
-            
-            if useCustomAPIKey {
-                Section(header: Text("Custom API Key Status")) {
-                    if KeychainManager.shared.getAPIKey() != nil {
-                        Text("Custom API Key is set")
-                            .foregroundColor(.green)
-                    } else {
-                        Text("No custom API Key")
-                            .foregroundColor(.red)
-                    }
-                }
-            }
-        }
-        .navigationTitle("Settings")
-        .sheet(isPresented: $showAPIKeySettings) {
-            APIKeySettingsView()
         }
     }
 }

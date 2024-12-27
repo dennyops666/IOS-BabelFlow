@@ -7,29 +7,30 @@
 
 import SwiftUI
 
-struct MainView: View {
-    var body: some View {
-        TabView {
-            ContentView()
+@main
+struct IOS_BabelFlowApp: App {
+    @StateObject private var themeManager = ThemeManager()
+    @State private var useCustomAPIKey = KeychainManager.shared.isUsingCustomKey()
+    
+    var body: some Scene {
+        WindowGroup {
+            TabView {
+                NavigationView {
+                    ContentView(useCustomAPIKey: $useCustomAPIKey)
+                }
                 .tabItem {
                     Label("Translate", systemImage: "text.bubble")
                 }
-            
-            NavigationView {
-                SettingsView()
+                
+                NavigationView {
+                    SettingsView(useCustomAPIKey: $useCustomAPIKey)
+                }
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape")
+                }
             }
-            .tabItem {
-                Label("Settings", systemImage: "gearshape")
-            }
-        }
-    }
-}
-
-@main
-struct IOS_BabelFlowApp: App {
-    var body: some Scene {
-        WindowGroup {
-            MainView()
+            .environmentObject(themeManager)
+            .preferredColorScheme(themeManager.colorScheme)
         }
     }
 }
