@@ -323,6 +323,13 @@ struct APIKeySettingsView: View {
             Form {
                 Section(header: Text("OpenAI API Key")) {
                     SecureField("Enter API Key", text: $apiKey)
+                        .onAppear {
+                            // 加载已保存的 API Key
+                            if let savedKey = KeychainManager.shared.getAPIKey() {
+                                apiKey = savedKey
+                            }
+                        }
+                    
                     Button("Save API Key") {
                         if KeychainManager.shared.saveAPIKey(apiKey) {
                             alertMessage = "API Key saved successfully"
@@ -332,16 +339,17 @@ struct APIKeySettingsView: View {
                             showAlert = true
                         }
                     }
+                    .disabled(apiKey.isEmpty)
                 }
                 
                 Section {
-                    Button("Delete API Key") {
+                    Button("Clear API Key") {
                         if KeychainManager.shared.deleteAPIKey() {
                             apiKey = ""
-                            alertMessage = "API Key deleted successfully"
+                            alertMessage = "API Key cleared successfully"
                             showAlert = true
                         } else {
-                            alertMessage = "Failed to delete API Key"
+                            alertMessage = "Failed to clear API Key"
                             showAlert = true
                         }
                     }
@@ -349,12 +357,15 @@ struct APIKeySettingsView: View {
                 }
             }
             .navigationTitle("API Key Settings")
+            .navigationBarItems(trailing: Button("Done") {
+                presentationMode.wrappedValue.dismiss()
+            })
             .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text("Notice"),
                     message: Text(alertMessage),
                     dismissButton: .default(Text("OK")) {
-                        if alertMessage.contains("successfully") {
+                        if alertMessage.contains("successfully") && alertMessage.contains("cleared") {
                             presentationMode.wrappedValue.dismiss()
                         }
                     }
@@ -419,27 +430,29 @@ struct SettingsView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
+struct MainView: View {
+    var body: some View {
         TabView {
             ContentView()
                 .tabItem {
                     Label("Translate", systemImage: "text.bubble")
                 }
-
+            
             NavigationView {
                 SettingsView()
             }
             .tabItem {
                 Label("Settings", systemImage: "gearshape")
             }
-            
-            NavigationView {
-                APIKeySettingsView()
-            }
-            .tabItem {
-                Label("API Key", systemImage: "key.fill")
-            }
+        }
+    }
+}
+
+@main
+struct IOS_BabelFlowApp: App {
+    var body: some Scene {
+        WindowGroup {
+            MainView()
         }
     }
 }
