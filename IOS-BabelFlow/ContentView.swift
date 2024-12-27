@@ -25,6 +25,11 @@ struct ContentView: View {
     
     let speechSynthesizer = AVSpeechSynthesizer()
     
+    init() {
+        // 设置滚动条颜色
+        UIScrollView.appearance().indicatorStyle = .black
+    }
+    
     private func performTranslation() {
         guard !inputText.isEmpty else {
             translatedText = "Please enter text to translate."
@@ -86,6 +91,15 @@ struct ContentView: View {
                             .frame(minHeight: 100, maxHeight: 200)
                             .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
                             .scrollContentBackground(.hidden)
+                            .onChange(of: inputText) { _ in
+                                performTranslation()
+                            }
+                            .onSubmit {
+                                performTranslation()
+                            }
+                            .onAppear {
+                                UITextView.appearance().indicatorStyle = .black
+                            }
                     }
                     .padding()
                     
@@ -101,6 +115,12 @@ struct ContentView: View {
                     .padding(.top, 15)
                 }
                 .padding(.horizontal)
+
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: themeManager.currentTheme == .light ? Color.black : Color.white))
+                        .padding(.vertical, 5)
+                }
 
                 HStack(spacing: 4) {
                     Spacer()
@@ -173,28 +193,28 @@ struct ContentView: View {
             }
             .padding()
             
-            if isLoading {
-                ProgressView()
-                    .padding()
-            }
-
             Text("Translated Text:")
                 .font(.headline)
                 .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
                 .padding(.top)
                 
             ZStack(alignment: .topTrailing) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 0)
-                        .fill(themeManager.currentTheme == .light ? Color.white : Color.black)
-                        .border(Color.gray, width: 1)
-                    
-                    Text(translatedText)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .frame(minHeight: 100, maxHeight: 200)
-                        .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
+                ScrollView {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 0)
+                            .fill(themeManager.currentTheme == .light ? Color.white : Color.black)
+                            .border(Color.gray, width: 1)
+                        
+                        Text(translatedText)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .frame(minHeight: 100, maxHeight: 200)
+                            .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
+                            .padding()
+                    }
                 }
-                .padding()
+                .onAppear {
+                    UIScrollView.appearance().indicatorStyle = .black
+                }
                 
                 Button(action: {
                     UIPasteboard.general.string = translatedText
