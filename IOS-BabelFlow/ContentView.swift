@@ -9,7 +9,7 @@ import SwiftUI
 import AVFoundation
 
 struct ContentView: View {
-    @State private var inputText: String = ""
+    @State private var inputText: String = "Please enter text to translate."
     @State private var translatedText: String = ""
     @State private var sourceLanguage: String = UserDefaults.standard.string(forKey: "defaultSourceLanguage") ?? "Auto"
     @State private var targetLanguage: String = UserDefaults.standard.string(forKey: "defaultTargetLanguage") ?? "English"
