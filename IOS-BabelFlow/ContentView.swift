@@ -404,22 +404,32 @@ struct SettingsView: View {
                     set: { newValue in
                         useCustomAPIKey = newValue
                         KeychainManager.shared.setUseCustomKey(newValue)
+                        if !newValue {
+                            // 如果切换到使用默认 Key，删除自定义的 Key
+                            _ = KeychainManager.shared.deleteAPIKey()
+                        }
                     }
                 ))
-                .onChange(of: useCustomAPIKey) { _ in
-                    // 当切换到使用环境变量时，可以选择是否清除已保存的自定义 API Key
-                    if !useCustomAPIKey {
-                        _ = KeychainManager.shared.deleteAPIKey()
-                    }
-                }
                 
                 if useCustomAPIKey {
                     Button("Set Custom API Key") {
                         showAPIKeySettings = true
                     }
                 } else {
-                    Text("Using Environment Variable API Key")
+                    Text("Using Default API Key")
                         .foregroundColor(.gray)
+                }
+            }
+            
+            if useCustomAPIKey {
+                Section(header: Text("Custom API Key Status")) {
+                    if KeychainManager.shared.getAPIKey() != nil {
+                        Text("Custom API Key is set")
+                            .foregroundColor(.green)
+                    } else {
+                        Text("No custom API Key")
+                            .foregroundColor(.red)
+                    }
                 }
             }
         }
