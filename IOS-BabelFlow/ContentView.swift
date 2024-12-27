@@ -16,17 +16,20 @@ struct ContentView: View {
     @State private var isLoading: Bool = false
     @State private var isPaused: Bool = false
     @State private var showCopySuccessMessage: Bool = false
+    @State private var showAPIKeySettings = false
+    @State private var showAPIKeyAlert = false
     
     @StateObject private var themeManager = ThemeManager()
     
     let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
     
-    let translationService = TranslationService(apiKey: ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? "")
+    private var translationService: TranslationService {
+        TranslationService(apiKey: KeychainManager.shared.getAPIKey() ?? "")
+    }
     
     let speechSynthesizer = AVSpeechSynthesizer()
     
     init() {
-        // 设置滚动条颜色
         UIScrollView.appearance().indicatorStyle = .black
     }
     
@@ -36,11 +39,20 @@ struct ContentView: View {
             return
         }
         
+        guard let _ = KeychainManager.shared.getAPIKey() else {
+            showAPIKeyAlert = true
+            return
+        }
+        
         isLoading = true
         let source = sourceLanguage == "Auto" ? "" : sourceLanguage
         translationService.translate(text: inputText, from: source, to: targetLanguage) { result in
             DispatchQueue.main.async {
-                translatedText = result ?? "Translation failed. Please check your internet connection or try again later."
+                if let translatedResult = result {
+                    translatedText = translatedResult
+                } else {
+                    translatedText = "Translation failed. Please check your internet connection or API Key."
+                }
                 isLoading = false
             }
         }
@@ -192,6 +204,19 @@ struct ContentView: View {
                     .shadow(radius: 5)
             }
             .padding()
+            .alert(isPresented: $showAPIKeyAlert) {
+                Alert(
+                    title: Text("API Key Required"),
+                    message: Text("Please set your OpenAI API Key in the settings to use the translation feature."),
+                    primaryButton: .default(Text("Set API Key")) {
+                        showAPIKeySettings = true
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
+            .sheet(isPresented: $showAPIKeySettings) {
+                APIKeySettingsView()
+            }
             
             Text("Translated Text:")
                 .font(.headline)
@@ -268,6 +293,16 @@ struct ContentView: View {
         .background(themeManager.currentTheme == .light ? Color.white : Color.black)
         .animation(.easeInOut, value: themeManager.currentTheme)
         .padding()
+        .alert(isPresented: $showAPIKeyAlert) {
+            Alert(title: Text("API Key Required"), message: Text("Please enter your OpenAI API Key in the settings."), dismissButton: .default(Text("OK")) {
+                showAPIKeySettings = true
+            })
+        }
+        .sheet(isPresented: $showAPIKeySettings) {
+            NavigationView {
+                APIKeySettingsView()
+            }
+        }
     }
     
     private func swapLanguages() {
@@ -277,32 +312,110 @@ struct ContentView: View {
     }
 }
 
+struct APIKeySettingsView: View {
+    @State private var apiKey: String = ""
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @Environment(\.presentationMode) var presentationMode
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("OpenAI API Key")) {
+                    SecureField("Enter API Key", text: $apiKey)
+                    Button("Save API Key") {
+                        if KeychainManager.shared.saveAPIKey(apiKey) {
+                            alertMessage = "API Key saved successfully"
+                            showAlert = true
+                        } else {
+                            alertMessage = "Failed to save API Key"
+                            showAlert = true
+                        }
+                    }
+                }
+                
+                Section {
+                    Button("Delete API Key") {
+                        if KeychainManager.shared.deleteAPIKey() {
+                            apiKey = ""
+                            alertMessage = "API Key deleted successfully"
+                            showAlert = true
+                        } else {
+                            alertMessage = "Failed to delete API Key"
+                            showAlert = true
+                        }
+                    }
+                    .foregroundColor(.red)
+                }
+            }
+            .navigationTitle("API Key Settings")
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Notice"),
+                    message: Text(alertMessage),
+                    dismissButton: .default(Text("OK")) {
+                        if alertMessage.contains("successfully") {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }
+                )
+            }
+        }
+    }
+}
+
 struct SettingsView: View {
     @AppStorage("defaultSourceLanguage") private var defaultSourceLanguage = "Auto"
     @AppStorage("defaultTargetLanguage") private var defaultTargetLanguage = "English"
-    @AppStorage("fontSize") private var fontSize: Double = 14
-
-    let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
-
+    @State private var showAPIKeySettings = false
+    @State private var useCustomAPIKey = KeychainManager.shared.isUsingCustomKey()
+    
     var body: some View {
         Form {
-            Picker("Default Source Language", selection: $defaultSourceLanguage) {
-                ForEach(languages, id: \ .self) {
-                    Text($0)
+            Section(header: Text("Default Languages")) {
+                Picker("Source Language", selection: $defaultSourceLanguage) {
+                    Text("Auto").tag("Auto")
+                    ForEach(["English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"], id: \.self) { language in
+                        Text(language).tag(language)
+                    }
+                }
+                
+                Picker("Target Language", selection: $defaultTargetLanguage) {
+                    ForEach(["English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"], id: \.self) { language in
+                        Text(language).tag(language)
+                    }
                 }
             }
-
-            Picker("Default Target Language", selection: $defaultTargetLanguage) {
-                ForEach(languages.dropFirst(), id: \ .self) {
-                    Text($0)
+            
+            Section(header: Text("API Settings")) {
+                Toggle("Use Custom API Key", isOn: Binding(
+                    get: { useCustomAPIKey },
+                    set: { newValue in
+                        useCustomAPIKey = newValue
+                        KeychainManager.shared.setUseCustomKey(newValue)
+                    }
+                ))
+                .onChange(of: useCustomAPIKey) { _ in
+                    // 当切换到使用环境变量时，可以选择是否清除已保存的自定义 API Key
+                    if !useCustomAPIKey {
+                        _ = KeychainManager.shared.deleteAPIKey()
+                    }
                 }
-            }
-
-            Slider(value: $fontSize, in: 10...24, step: 1) {
-                Text("Font Size")
+                
+                if useCustomAPIKey {
+                    Button("Set Custom API Key") {
+                        showAPIKeySettings = true
+                    }
+                } else {
+                    Text("Using Environment Variable API Key")
+                        .foregroundColor(.gray)
+                }
             }
         }
         .navigationTitle("Settings")
+        .sheet(isPresented: $showAPIKeySettings) {
+            APIKeySettingsView()
+        }
     }
 }
 
@@ -314,10 +427,19 @@ struct ContentView_Previews: PreviewProvider {
                     Label("Translate", systemImage: "text.bubble")
                 }
 
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }
+            NavigationView {
+                SettingsView()
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gearshape")
+            }
+            
+            NavigationView {
+                APIKeySettingsView()
+            }
+            .tabItem {
+                Label("API Key", systemImage: "key.fill")
+            }
         }
     }
 }
