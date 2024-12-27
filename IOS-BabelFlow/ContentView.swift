@@ -143,6 +143,14 @@ struct ContentView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
                 
+                Button(action: {
+                    swapLanguages()
+                }) {
+                    Image(systemName: "arrow.left.arrow.right")
+                        .foregroundColor(.blue)
+                }
+                .padding(.horizontal)
+                
                 Picker("Target Language", selection: $targetLanguage) {
                     ForEach(languages.dropFirst(), id: \ .self) {
                         Text($0)
@@ -237,6 +245,12 @@ struct ContentView: View {
         .background(themeManager.currentTheme == .light ? Color.white : Color.black)
         .animation(.easeInOut, value: themeManager.currentTheme)
         .padding()
+    }
+    
+    private func swapLanguages() {
+        let temp = sourceLanguage
+        sourceLanguage = targetLanguage
+        targetLanguage = temp
     }
 }
 
