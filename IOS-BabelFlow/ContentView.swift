@@ -180,6 +180,7 @@ struct ContentView: View {
 
             Text("Translated Text:")
                 .font(.headline)
+                .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
                 .padding(.top)
                 
             ZStack(alignment: .topTrailing) {
