@@ -77,20 +77,18 @@ struct ContentView: View {
             
             VStack {
                 ZStack(alignment: .topTrailing) {
-                    ScrollView {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 0)
+                            .fill(themeManager.currentTheme == .light ? Color.white : Color.black)
+                            .border(Color.gray, width: 1)
+                        
                         TextEditor(text: $inputText)
                             .frame(minHeight: 100, maxHeight: 200)
-                            .border(Color.gray, width: 1)
-                            .padding()
-                            .onTapGesture {
-                                // Dismiss keyboard
-                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                            }
-                            .onChange(of: inputText) { _ in
-                                performTranslation()
-                            }
+                            .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
+                            .scrollContentBackground(.hidden)
                     }
-                    .background(themeManager.currentTheme == .light ? Color.white : Color.black)
+                    .padding()
+                    
                     Button(action: {
                         inputText = ""
                         translatedText = ""
@@ -99,41 +97,42 @@ struct ContentView: View {
                     }
                     .buttonStyle(BorderlessButtonStyle())
                     .help("Clear Text")
-                    .padding(.trailing, 20)
-                    .padding(.top, 20)
+                    .padding(.trailing, 25)
+                    .padding(.top, 15)
                 }
-            }
-            
-            HStack(spacing: 4) {
-                Spacer()
-                Button(action: {
-                    speakTranslatedText(inputText, language: sourceLanguage)
-                }) {
-                    Image(systemName: "speaker.wave.2.fill")
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .help("Speak Input")
-                Button(action: {
-                    if isPaused {
-                        speechSynthesizer.continueSpeaking()
-                    } else {
-                        speechSynthesizer.pauseSpeaking(at: .immediate)
+                .padding(.horizontal)
+
+                HStack(spacing: 4) {
+                    Spacer()
+                    Button(action: {
+                        speakTranslatedText(inputText, language: sourceLanguage)
+                    }) {
+                        Image(systemName: "speaker.wave.2.fill")
                     }
-                    isPaused.toggle()
-                }) {
-                    Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                    .buttonStyle(BorderlessButtonStyle())
+                    .help("Speak Input")
+                    Button(action: {
+                        if isPaused {
+                            speechSynthesizer.continueSpeaking()
+                        } else {
+                            speechSynthesizer.pauseSpeaking(at: .immediate)
+                        }
+                        isPaused.toggle()
+                    }) {
+                        Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .help(isPaused ? "Continue Speech" : "Pause Speech")
+                    Button(action: {
+                        speechSynthesizer.stopSpeaking(at: .immediate)
+                    }) {
+                        Image(systemName: "stop.fill")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .help("Stop Speech")
                 }
-                .buttonStyle(BorderlessButtonStyle())
-                .help(isPaused ? "Continue Speech" : "Pause Speech")
-                Button(action: {
-                    speechSynthesizer.stopSpeaking(at: .immediate)
-                }) {
-                    Image(systemName: "stop.fill")
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .help("Stop Speech")
+                .padding(.trailing, 20)
             }
-            .padding(.trailing, 20) // Move buttons slightly left from the right edge
             
             HStack {
                 Picker("Source Language", selection: $sourceLanguage) {
@@ -182,31 +181,34 @@ struct ContentView: View {
             Text("Translated Text:")
                 .font(.headline)
                 .padding(.top)
-            
-            VStack {
-                ZStack(alignment: .topTrailing) {
-                    ScrollView {
-                        Text(translatedText)
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .frame(minHeight: 100, maxHeight: 200)
-                    .border(Color.gray, width: 1)
-                    .padding()
-                    .background(themeManager.currentTheme == .light ? Color.white : Color.black)
-                    Button(action: {
-                        UIPasteboard.general.string = translatedText
-                        showCopySuccessMessage = true
-                    }) {
-                        Image(systemName: "doc.on.doc")
-                            .foregroundColor(.blue)
-                            .padding()
-                    }
-                    .offset(x: -10, y: 10)
+                
+            ZStack(alignment: .topTrailing) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 0)
+                        .fill(themeManager.currentTheme == .light ? Color.white : Color.black)
+                        .border(Color.gray, width: 1)
+                    
+                    Text(translatedText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(minHeight: 100, maxHeight: 200)
+                        .foregroundColor(themeManager.currentTheme == .light ? Color.black : Color.white)
                 }
-                .alert(isPresented: $showCopySuccessMessage) {
-                    Alert(title: Text("复制成功"), message: Text("翻译内容已复制到剪贴板。"), dismissButton: .default(Text("确定")))
+                .padding()
+                
+                Button(action: {
+                    UIPasteboard.general.string = translatedText
+                    showCopySuccessMessage = true
+                }) {
+                    Image(systemName: "doc.on.doc")
                 }
+                .buttonStyle(BorderlessButtonStyle())
+                .help("Copy Translation")
+                .padding(.trailing, 25)
+                .padding(.top, 15)
+            }
+            .padding(.horizontal)
+            .alert(isPresented: $showCopySuccessMessage) {
+                Alert(title: Text("复制成功"), message: Text("翻译内容已复制到剪贴板。"), dismissButton: .default(Text("确定")))
             }
             
             HStack(spacing: 4) {
@@ -238,7 +240,7 @@ struct ContentView: View {
                 .buttonStyle(BorderlessButtonStyle())
                 .help("Stop Speech")
             }
-            .padding(.trailing, 20) // Move buttons two spaces further right
+            .padding(.trailing, 20)
 
             Spacer()
         }
