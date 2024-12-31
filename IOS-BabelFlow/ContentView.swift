@@ -224,6 +224,15 @@ struct ContentView: View {
                         }
                         .buttonStyle(.borderless)
                         .disabled(isLoading)
+                        .alert(isPresented: .constant(speechRecognizer.errorMessage != nil)) {
+                            Alert(
+                                title: Text("提示"),
+                                message: Text(speechRecognizer.errorMessage ?? ""),
+                                dismissButton: .default(Text("确定")) {
+                                    speechRecognizer.errorMessage = nil
+                                }
+                            )
+                        }
                         
                         Button(action: {
                             if !inputText.isEmpty {

@@ -8,6 +8,7 @@ class SpeechRecognitionManager: NSObject, ObservableObject {
     @Published var isRecording = false
     @Published var recognizedText = ""
     @Published var errorMessage: String?
+    @Published var isAuthorized = false
     
     private var audioEngine = AVAudioEngine()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -20,102 +21,135 @@ class SpeechRecognitionManager: NSObject, ObservableObject {
     }
     
     private func setupSpeechRecognizer() {
-        speechRecognizer = SFSpeechRecognizer(locale: .current)
+        speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "zh-CN"))
+        
+        guard speechRecognizer?.isAvailable == true else {
+            DispatchQueue.main.async {
+                self.errorMessage = "Speech recognition is not available"
+            }
+            return
+        }
         
         SFSpeechRecognizer.requestAuthorization { [weak self] authStatus in
             DispatchQueue.main.async {
+                guard let self = self else { return }
+                
                 switch authStatus {
                 case .authorized:
-                    self?.errorMessage = nil
+                    self.isAuthorized = true
+                    self.errorMessage = nil
                 case .denied:
-                    self?.errorMessage = "用户拒绝了语音识别权限"
+                    self.isAuthorized = false
+                    self.errorMessage = "用户拒绝了语音识别权限"
                 case .restricted:
-                    self?.errorMessage = "语音识别在此设备上受限"
+                    self.isAuthorized = false
+                    self.errorMessage = "语音识别在此设备上受限"
                 case .notDetermined:
-                    self?.errorMessage = "语音识别未获得授权"
+                    self.isAuthorized = false
+                    self.errorMessage = "语音识别未获得授权"
                 @unknown default:
-                    self?.errorMessage = "未知错误"
+                    self.isAuthorized = false
+                    self.errorMessage = "未知错误"
                 }
             }
         }
     }
     
     func startRecording() {
-        guard !isRecording else { return }
-        
-        // 重置之前的任务
-        if let recognitionTask = recognitionTask {
-            recognitionTask.cancel()
-            self.recognitionTask = nil
-        }
-        
-        // 设置音频会话
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch {
-            errorMessage = "设置音频会话失败: \(error.localizedDescription)"
-            return
-        }
-        
-        // 创建并配置识别请求
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let recognitionRequest = recognitionRequest else {
-            errorMessage = "无法创建语音识别请求"
-            return
-        }
-        recognitionRequest.shouldReportPartialResults = true
-        
-        // 配置音频引擎和识别任务
-        let inputNode = audioEngine.inputNode
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
-            guard let self = self else { return }
-            
-            if let error = error {
-                self.errorMessage = error.localizedDescription
-                self.stopRecording()
+        DispatchQueue.main.async {
+            guard self.isAuthorized else {
+                self.errorMessage = "请先授权语音识别权限"
                 return
             }
             
-            if let result = result {
-                self.recognizedText = result.bestTranscription.formattedString
+            guard !self.isRecording else { return }
+            
+            // 重置之前的任务
+            if let recognitionTask = self.recognitionTask {
+                recognitionTask.cancel()
+                self.recognitionTask = nil
             }
             
-            if result?.isFinal == true {
-                self.stopRecording()
+            // 请求麦克风权限
+            AVAudioSession.sharedInstance().requestRecordPermission { [weak self] allowed in
+                guard let self = self else { return }
+                
+                DispatchQueue.main.async {
+                    if !allowed {
+                        self.errorMessage = "请先授权麦克风权限"
+                        return
+                    }
+                    
+                    self.startRecordingWithPermission()
+                }
             }
         }
-        
-        // 安装音频tap
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
-            recognitionRequest.append(buffer)
-        }
-        
-        // 启动音频引擎
-        audioEngine.prepare()
+    }
+    
+    private func startRecordingWithPermission() {
         do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            
+            recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+            guard let recognitionRequest = recognitionRequest else {
+                errorMessage = "无法创建语音识别请求"
+                return
+            }
+            
+            recognitionRequest.shouldReportPartialResults = true
+            
+            let inputNode = audioEngine.inputNode
+            recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
+                guard let self = self else { return }
+                
+                DispatchQueue.main.async {
+                    if let error = error {
+                        self.errorMessage = error.localizedDescription
+                        self.stopRecording()
+                        return
+                    }
+                    
+                    if let result = result {
+                        self.recognizedText = result.bestTranscription.formattedString
+                    }
+                    
+                    if result?.isFinal == true {
+                        self.stopRecording()
+                    }
+                }
+            }
+            
+            let recordingFormat = inputNode.outputFormat(forBus: 0)
+            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+                self.recognitionRequest?.append(buffer)
+            }
+            
+            audioEngine.prepare()
             try audioEngine.start()
-            isRecording = true
-            errorMessage = nil
+            
+            DispatchQueue.main.async {
+                self.isRecording = true
+                self.errorMessage = nil
+            }
+            
         } catch {
-            errorMessage = "启动音频引擎失败: \(error.localizedDescription)"
-            stopRecording()
+            DispatchQueue.main.async {
+                self.errorMessage = error.localizedDescription
+            }
         }
     }
     
     func stopRecording() {
-        audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        recognitionRequest?.endAudio()
-        recognitionTask?.cancel()
-        
-        isRecording = false
-        recognitionRequest = nil
-        recognitionTask = nil
-        
-        // 重置音频会话
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        DispatchQueue.main.async {
+            self.audioEngine.stop()
+            self.audioEngine.inputNode.removeTap(onBus: 0)
+            self.recognitionRequest?.endAudio()
+            self.recognitionRequest = nil
+            self.recognitionTask?.cancel()
+            self.recognitionTask = nil
+            self.isRecording = false
+        }
     }
 }
