@@ -7,7 +7,7 @@ class KeychainManager {
     private let useCustomKeyKey = "com.babelflow.useCustomKey"
     
     // 默认的 API Key - 请在运行时设置
-    private let defaultAPIKey = "YOUR_API_KEY"
+    private let defaultAPIKey = "YOUR_DEFAULT_API_KEY"  // 请在运行时替换为实际的 API Key
     
     private init() {
         // 初始化时，如果没有自定义 Key，确保使用默认 Key

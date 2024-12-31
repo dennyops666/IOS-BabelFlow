@@ -6,13 +6,25 @@
 	<dict>
 		<key>IOS-BabelFlow.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>isShown</key>
+			<true/>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>D8EA43A22D1BE7B300AD00E0</key>
+		<key>D8EA43A32D1BE7B300AD00E0</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D8EA43B82D1BE7B600AD00E0</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D8EA43C22D1BE7B600AD00E0</key>
 		<dict>
 			<key>primary</key>
 			<true/>

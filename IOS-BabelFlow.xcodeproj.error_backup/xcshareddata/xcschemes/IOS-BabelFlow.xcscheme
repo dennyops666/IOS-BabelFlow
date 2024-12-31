@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D8EA43A22D1BE7B300AD00E0"
+               BlueprintIdentifier = "D8EA43A32D1BE7B300AD00E0"
                BuildableName = "IOS-BabelFlow.app"
                BlueprintName = "IOS-BabelFlow"
                ReferencedContainer = "container:IOS-BabelFlow.xcodeproj">
@@ -29,6 +29,30 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D8EA43B82D1BE7B600AD00E0"
+               BuildableName = "IOS-BabelFlowTests.xctest"
+               BlueprintName = "IOS-BabelFlowTests"
+               ReferencedContainer = "container:IOS-BabelFlow.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D8EA43C22D1BE7B600AD00E0"
+               BuildableName = "IOS-BabelFlowUITests.xctest"
+               BlueprintName = "IOS-BabelFlowUITests"
+               ReferencedContainer = "container:IOS-BabelFlow.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -44,7 +68,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D8EA43A22D1BE7B300AD00E0"
+            BlueprintIdentifier = "D8EA43A32D1BE7B300AD00E0"
             BuildableName = "IOS-BabelFlow.app"
             BlueprintName = "IOS-BabelFlow"
             ReferencedContainer = "container:IOS-BabelFlow.xcodeproj">
@@ -52,8 +76,13 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "OPEN"
-            value = ""
+            key = "OPENAI_API_KEY"
+            value = "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&#10;"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CG_NUMERICS_SHOW_BACKTRACE"
+            value = "1"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
@@ -68,7 +97,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D8EA43A22D1BE7B300AD00E0"
+            BlueprintIdentifier = "D8EA43A32D1BE7B300AD00E0"
             BuildableName = "IOS-BabelFlow.app"
             BlueprintName = "IOS-BabelFlow"
             ReferencedContainer = "container:IOS-BabelFlow.xcodeproj">

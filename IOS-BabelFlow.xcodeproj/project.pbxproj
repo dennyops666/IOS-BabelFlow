@@ -3,49 +3,81 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 56;
 	objects = {
 
-/* Begin PBXContainerItemProxy section */
-		D8EA43BA2D1BE7B600AD00E0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D8EA439C2D1BE7B300AD00E0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D8EA43A32D1BE7B300AD00E0;
-			remoteInfo = "IOS-BabelFlow";
-		};
-		D8EA43C42D1BE7B600AD00E0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D8EA439C2D1BE7B300AD00E0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D8EA43A32D1BE7B300AD00E0;
-			remoteInfo = "IOS-BabelFlow";
-		};
-/* End PBXContainerItemProxy section */
+/* Begin PBXBuildFile section */
+		D8EA43A72D1BE7B300AD00E0 /* IOS_BabelFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EA43A62D1BE7B300AD00E0 /* IOS_BabelFlowApp.swift */; };
+		D8EA43A92D1BE7B300AD00E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EA43A82D1BE7B300AD00E0 /* ContentView.swift */; };
+		D8EA43AB2D1BE7B600AD00E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8EA43AA2D1BE7B600AD00E0 /* Assets.xcassets */; };
+		D8EA43AE2D1BE7B600AD00E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8EA43AD2D1BE7B600AD00E0 /* Preview Assets.xcassets */; };
+		D8EA43D52D1BE7B600AD00E0 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EA43D02D1BE7B600AD00E0 /* KeychainManager.swift */; };
+		D8EA43D62D1BE7B600AD00E0 /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EA43D12D1BE7B600AD00E0 /* TranslationService.swift */; };
+		D8EA43D72D1BE7B600AD00E0 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EA43D22D1BE7B600AD00E0 /* ThemeManager.swift */; };
+		D8EA43D82D1BE7B600AD00E0 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EA43D32D1BE7B600AD00E0 /* Persistence.swift */; };
+		D8EA43D92D1BE7B600AD00E0 /* OpenAITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EA43D42D1BE7B600AD00E0 /* OpenAITest.swift */; };
+		D8EA43E12D1BE8C600AD00E0 /* IOS_BabelFlow.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D8EA43E02D1BE8C600AD00E0 /* IOS_BabelFlow.xcdatamodeld */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D8EA43A42D1BE7B300AD00E0 /* IOS-BabelFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IOS-BabelFlow.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8EA43B92D1BE7B600AD00E0 /* IOS-BabelFlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "IOS-BabelFlowTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8EA43C32D1BE7B600AD00E0 /* IOS-BabelFlowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "IOS-BabelFlowUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8EA43A32D1BE7B300AD00E0 /* IOS-BabelFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IOS-BabelFlow.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8EA43A62D1BE7B300AD00E0 /* IOS_BabelFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IOS_BabelFlowApp.swift; path = "IOS-BabelFlow/IOS_BabelFlowApp.swift"; sourceTree = SOURCE_ROOT; };
+		D8EA43A82D1BE7B300AD00E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = "IOS-BabelFlow/ContentView.swift"; sourceTree = SOURCE_ROOT; };
+		D8EA43AA2D1BE7B600AD00E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "IOS-BabelFlow/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
+		D8EA43AD2D1BE7B600AD00E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D8EA43AF2D1BE7B600AD00E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "IOS-BabelFlow/Info.plist"; sourceTree = SOURCE_ROOT; };
+		D8EA43D02D1BE7B600AD00E0 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainManager.swift; path = "IOS-BabelFlow/KeychainManager.swift"; sourceTree = SOURCE_ROOT; };
+		D8EA43D12D1BE7B600AD00E0 /* TranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TranslationService.swift; path = "IOS-BabelFlow/TranslationService.swift"; sourceTree = SOURCE_ROOT; };
+		D8EA43D22D1BE7B600AD00E0 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThemeManager.swift; path = "IOS-BabelFlow/ThemeManager.swift"; sourceTree = SOURCE_ROOT; };
+		D8EA43D32D1BE7B600AD00E0 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Persistence.swift; path = "IOS-BabelFlow/Persistence.swift"; sourceTree = SOURCE_ROOT; };
+		D8EA43D42D1BE7B600AD00E0 /* OpenAITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OpenAITest.swift; path = "IOS-BabelFlow/OpenAITest.swift"; sourceTree = SOURCE_ROOT; };
+		D8EA43E02D1BE8C600AD00E0 /* IOS_BabelFlow.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodeld; name = IOS_BabelFlow.xcdatamodeld; path = "IOS-BabelFlow/IOS_BabelFlow.xcdatamodeld"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		D8EA43A62D1BE7B300AD00E0 /* IOS-BabelFlow */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
+/* Begin PBXGroup section */
+		D8EA439A2D1BE7B300AD00E0 = {
+			isa = PBXGroup;
+			children = (
+				D8EA43A52D1BE7B300AD00E0 /* IOS-BabelFlow */,
+				D8EA43A42D1BE7B300AD00E0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D8EA43A42D1BE7B300AD00E0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D8EA43A32D1BE7B300AD00E0 /* IOS-BabelFlow.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D8EA43A52D1BE7B300AD00E0 /* IOS-BabelFlow */ = {
+			isa = PBXGroup;
+			children = (
+				D8EA43A62D1BE7B300AD00E0 /* IOS_BabelFlowApp.swift */,
+				D8EA43A82D1BE7B300AD00E0 /* ContentView.swift */,
+				D8EA43D02D1BE7B600AD00E0 /* KeychainManager.swift */,
+				D8EA43D12D1BE7B600AD00E0 /* TranslationService.swift */,
+				D8EA43D22D1BE7B600AD00E0 /* ThemeManager.swift */,
+				D8EA43D32D1BE7B600AD00E0 /* Persistence.swift */,
+				D8EA43D42D1BE7B600AD00E0 /* OpenAITest.swift */,
+				D8EA43E02D1BE8C600AD00E0 /* IOS_BabelFlow.xcdatamodeld */,
+				D8EA43AA2D1BE7B600AD00E0 /* Assets.xcassets */,
+				D8EA43AF2D1BE7B600AD00E0 /* Info.plist */,
+				D8EA43AC2D1BE7B600AD00E0 /* Preview Content */,
+			);
 			path = "IOS-BabelFlow";
 			sourceTree = "<group>";
 		};
-		D8EA43BC2D1BE7B600AD00E0 /* IOS-BabelFlowTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "IOS-BabelFlowTests";
+		D8EA43AC2D1BE7B600AD00E0 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				D8EA43AD2D1BE7B600AD00E0 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		D8EA43C62D1BE7B600AD00E0 /* IOS-BabelFlowUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "IOS-BabelFlowUITests";
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
+/* End PBXGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D8EA43A12D1BE7B300AD00E0 /* Frameworks */ = {
@@ -55,221 +87,91 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D8EA43B62D1BE7B600AD00E0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D8EA43C02D1BE7B600AD00E0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
-/* Begin PBXGroup section */
-		D8EA439B2D1BE7B300AD00E0 = {
-			isa = PBXGroup;
-			children = (
-				D8EA43A62D1BE7B300AD00E0 /* IOS-BabelFlow */,
-				D8EA43BC2D1BE7B600AD00E0 /* IOS-BabelFlowTests */,
-				D8EA43C62D1BE7B600AD00E0 /* IOS-BabelFlowUITests */,
-				D8EA43A52D1BE7B300AD00E0 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		D8EA43A52D1BE7B300AD00E0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				D8EA43A42D1BE7B300AD00E0 /* IOS-BabelFlow.app */,
-				D8EA43B92D1BE7B600AD00E0 /* IOS-BabelFlowTests.xctest */,
-				D8EA43C32D1BE7B600AD00E0 /* IOS-BabelFlowUITests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-/* End PBXGroup section */
-
 /* Begin PBXNativeTarget section */
-		D8EA43A32D1BE7B300AD00E0 /* IOS-BabelFlow */ = {
+		D8EA43A22D1BE7B300AD00E0 /* IOS-BabelFlow */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8EA43CD2D1BE7B600AD00E0 /* Build configuration list for PBXNativeTarget "IOS-BabelFlow" */;
+			buildConfigurationList = D8EA43B22D1BE7B600AD00E0 /* Build configuration list for PBXNativeTarget "IOS-BabelFlow" */;
 			buildPhases = (
-				D8EA43A02D1BE7B300AD00E0 /* Sources */,
+				D8EA439F2D1BE7B300AD00E0 /* Sources */,
 				D8EA43A12D1BE7B300AD00E0 /* Frameworks */,
-				D8EA43A22D1BE7B300AD00E0 /* Resources */,
+				D8EA43A02D1BE7B300AD00E0 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				D8EA43A62D1BE7B300AD00E0 /* IOS-BabelFlow */,
 			);
 			name = "IOS-BabelFlow";
-			packageProductDependencies = (
-			);
 			productName = "IOS-BabelFlow";
-			productReference = D8EA43A42D1BE7B300AD00E0 /* IOS-BabelFlow.app */;
+			productReference = D8EA43A32D1BE7B300AD00E0 /* IOS-BabelFlow.app */;
 			productType = "com.apple.product-type.application";
-		};
-		D8EA43B82D1BE7B600AD00E0 /* IOS-BabelFlowTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D8EA43D02D1BE7B600AD00E0 /* Build configuration list for PBXNativeTarget "IOS-BabelFlowTests" */;
-			buildPhases = (
-				D8EA43B52D1BE7B600AD00E0 /* Sources */,
-				D8EA43B62D1BE7B600AD00E0 /* Frameworks */,
-				D8EA43B72D1BE7B600AD00E0 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D8EA43BB2D1BE7B600AD00E0 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D8EA43BC2D1BE7B600AD00E0 /* IOS-BabelFlowTests */,
-			);
-			name = "IOS-BabelFlowTests";
-			packageProductDependencies = (
-			);
-			productName = "IOS-BabelFlowTests";
-			productReference = D8EA43B92D1BE7B600AD00E0 /* IOS-BabelFlowTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		D8EA43C22D1BE7B600AD00E0 /* IOS-BabelFlowUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D8EA43D32D1BE7B600AD00E0 /* Build configuration list for PBXNativeTarget "IOS-BabelFlowUITests" */;
-			buildPhases = (
-				D8EA43BF2D1BE7B600AD00E0 /* Sources */,
-				D8EA43C02D1BE7B600AD00E0 /* Frameworks */,
-				D8EA43C12D1BE7B600AD00E0 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D8EA43C52D1BE7B600AD00E0 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D8EA43C62D1BE7B600AD00E0 /* IOS-BabelFlowUITests */,
-			);
-			name = "IOS-BabelFlowUITests";
-			packageProductDependencies = (
-			);
-			productName = "IOS-BabelFlowUITests";
-			productReference = D8EA43C32D1BE7B600AD00E0 /* IOS-BabelFlowUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		D8EA439C2D1BE7B300AD00E0 /* Project object */ = {
+		D8EA439B2D1BE7B300AD00E0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1610;
-				LastUpgradeCheck = 1610;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
 				TargetAttributes = {
-					D8EA43A32D1BE7B300AD00E0 = {
-						CreatedOnToolsVersion = 16.1;
-					};
-					D8EA43B82D1BE7B600AD00E0 = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = D8EA43A32D1BE7B300AD00E0;
-					};
-					D8EA43C22D1BE7B600AD00E0 = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = D8EA43A32D1BE7B300AD00E0;
+					D8EA43A22D1BE7B300AD00E0 = {
+						CreatedOnToolsVersion = 15.2;
 					};
 				};
 			};
-			buildConfigurationList = D8EA439F2D1BE7B300AD00E0 /* Build configuration list for PBXProject "IOS-BabelFlow" */;
+			buildConfigurationList = D8EA439E2D1BE7B300AD00E0 /* Build configuration list for PBXProject "IOS-BabelFlow" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = D8EA439B2D1BE7B300AD00E0;
-			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
-			productRefGroup = D8EA43A52D1BE7B300AD00E0 /* Products */;
+			mainGroup = D8EA439A2D1BE7B300AD00E0;
+			productRefGroup = D8EA43A42D1BE7B300AD00E0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D8EA43A32D1BE7B300AD00E0 /* IOS-BabelFlow */,
-				D8EA43B82D1BE7B600AD00E0 /* IOS-BabelFlowTests */,
-				D8EA43C22D1BE7B600AD00E0 /* IOS-BabelFlowUITests */,
+				D8EA43A22D1BE7B300AD00E0 /* IOS-BabelFlow */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		D8EA43A22D1BE7B300AD00E0 /* Resources */ = {
+		D8EA43A02D1BE7B300AD00E0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D8EA43B72D1BE7B600AD00E0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D8EA43C12D1BE7B600AD00E0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				D8EA43AE2D1BE7B600AD00E0 /* Preview Assets.xcassets in Resources */,
+				D8EA43AB2D1BE7B600AD00E0 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		D8EA43A02D1BE7B300AD00E0 /* Sources */ = {
+		D8EA439F2D1BE7B300AD00E0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D8EA43B52D1BE7B600AD00E0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D8EA43BF2D1BE7B600AD00E0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				D8EA43A92D1BE7B300AD00E0 /* ContentView.swift in Sources */,
+				D8EA43A72D1BE7B300AD00E0 /* IOS_BabelFlowApp.swift in Sources */,
+				D8EA43D52D1BE7B600AD00E0 /* KeychainManager.swift in Sources */,
+				D8EA43D62D1BE7B600AD00E0 /* TranslationService.swift in Sources */,
+				D8EA43D72D1BE7B600AD00E0 /* ThemeManager.swift in Sources */,
+				D8EA43D82D1BE7B600AD00E0 /* Persistence.swift in Sources */,
+				D8EA43D92D1BE7B600AD00E0 /* OpenAITest.swift in Sources */,
+				D8EA43E12D1BE8C600AD00E0 /* IOS_BabelFlow.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		D8EA43BB2D1BE7B600AD00E0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D8EA43A32D1BE7B300AD00E0 /* IOS-BabelFlow */;
-			targetProxy = D8EA43BA2D1BE7B600AD00E0 /* PBXContainerItemProxy */;
-		};
-		D8EA43C52D1BE7B600AD00E0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D8EA43A32D1BE7B300AD00E0 /* IOS-BabelFlow */;
-			targetProxy = D8EA43C42D1BE7B600AD00E0 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		D8EA43CB2D1BE7B600AD00E0 /* Debug */ = {
+		D8EA43B02D1BE7B600AD00E0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -321,7 +223,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -332,7 +234,7 @@
 			};
 			name = Debug;
 		};
-		D8EA43CC2D1BE7B600AD00E0 /* Release */ = {
+		D8EA43B12D1BE7B600AD00E0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -378,7 +280,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -388,7 +290,7 @@
 			};
 			name = Release;
 		};
-		D8EA43CE2D1BE7B600AD00E0 /* Debug */ = {
+		D8EA43B32D1BE7B600AD00E0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -396,8 +298,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"IOS-BabelFlow/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "IOS-BabelFlow/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -408,7 +312,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "asdasd.asdasdf.04.IOS-BabelFlow";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.babelflow.IOS-BabelFlow";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -416,7 +320,7 @@
 			};
 			name = Debug;
 		};
-		D8EA43CF2D1BE7B600AD00E0 /* Release */ = {
+		D8EA43B42D1BE7B600AD00E0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -424,8 +328,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"IOS-BabelFlow/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "IOS-BabelFlow/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -436,122 +342,36 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "asdasd.asdasdf.04.IOS-BabelFlow";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.babelflow.IOS-BabelFlow";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		D8EA43D12D1BE7B600AD00E0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "asdasd.asdasdf.04.IOS-BabelFlowTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IOS-BabelFlow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/IOS-BabelFlow";
-			};
-			name = Debug;
-		};
-		D8EA43D22D1BE7B600AD00E0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "asdasd.asdasdf.04.IOS-BabelFlowTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IOS-BabelFlow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/IOS-BabelFlow";
-			};
-			name = Release;
-		};
-		D8EA43D42D1BE7B600AD00E0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "asdasd.asdasdf.04.IOS-BabelFlowUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "IOS-BabelFlow";
-			};
-			name = Debug;
-		};
-		D8EA43D52D1BE7B600AD00E0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "asdasd.asdasdf.04.IOS-BabelFlowUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "IOS-BabelFlow";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D8EA439F2D1BE7B300AD00E0 /* Build configuration list for PBXProject "IOS-BabelFlow" */ = {
+		D8EA439E2D1BE7B300AD00E0 /* Build configuration list for PBXProject "IOS-BabelFlow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D8EA43CB2D1BE7B600AD00E0 /* Debug */,
-				D8EA43CC2D1BE7B600AD00E0 /* Release */,
+				D8EA43B02D1BE7B600AD00E0 /* Debug */,
+				D8EA43B12D1BE7B600AD00E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D8EA43CD2D1BE7B600AD00E0 /* Build configuration list for PBXNativeTarget "IOS-BabelFlow" */ = {
+		D8EA43B22D1BE7B600AD00E0 /* Build configuration list for PBXNativeTarget "IOS-BabelFlow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D8EA43CE2D1BE7B600AD00E0 /* Debug */,
-				D8EA43CF2D1BE7B600AD00E0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D8EA43D02D1BE7B600AD00E0 /* Build configuration list for PBXNativeTarget "IOS-BabelFlowTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D8EA43D12D1BE7B600AD00E0 /* Debug */,
-				D8EA43D22D1BE7B600AD00E0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D8EA43D32D1BE7B600AD00E0 /* Build configuration list for PBXNativeTarget "IOS-BabelFlowUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D8EA43D42D1BE7B600AD00E0 /* Debug */,
-				D8EA43D52D1BE7B600AD00E0 /* Release */,
+				D8EA43B32D1BE7B600AD00E0 /* Debug */,
+				D8EA43B42D1BE7B600AD00E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = D8EA439C2D1BE7B300AD00E0 /* Project object */;
+	rootObject = D8EA439B2D1BE7B300AD00E0 /* Project object */;
 }

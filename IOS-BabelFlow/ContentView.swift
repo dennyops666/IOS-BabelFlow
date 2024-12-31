@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVFoundation
+import NaturalLanguage
 
 struct ContentView: View {
     @State private var inputText = ""
@@ -22,7 +23,7 @@ struct ContentView: View {
     @Binding var useCustomAPIKey: Bool
     
     let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
-    let speechSynthesizer = AVSpeechSynthesizer()
+    @State private var speechSynthesizer = AVSpeechSynthesizer()
     
     private var translationService: TranslationService {
         TranslationService(apiKey: KeychainManager.shared.getAPIKey() ?? "")
@@ -264,6 +265,15 @@ struct ContentView: View {
             )
         }
         .padding()
+        .onAppear {
+            // 检查 API Key
+            if KeychainManager.shared.getAPIKey()?.isEmpty ?? true {
+                showAPIKeySettings = true
+            }
+        }
+        .sheet(isPresented: $showAPIKeySettings) {
+            APIKeySettingsView(useCustomAPIKey: $useCustomAPIKey)
+        }
         .alert("Copy Success", isPresented: $showCopySuccessMessage) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -271,36 +281,67 @@ struct ContentView: View {
         }
     }
     
-    func speakText(_ text: String, language: String) {
+    private func speakText(_ text: String, language: String) {
         guard !text.isEmpty else { return }
         
+        // 停止当前正在播放的语音
         speechSynthesizer.stopSpeaking(at: .immediate)
-        let utterance = AVSpeechUtterance(string: text)
         
-        // 如果是自动检测语言，默认使用英语
-        let languageCode = language == "Auto" ? "en-US" : getLanguageCode(for: language)
-        utterance.voice = AVSpeechSynthesisVoice(language: languageCode)
-        utterance.rate = 0.5  // 设置语速
-        utterance.pitchMultiplier = 1.0  // 设置音调
-        utterance.volume = 1.0  // 设置音量
+        var languageCode = language
+        
+        // 如果是 Auto 模式，检测文本语言
+        if language == "Auto" {
+            languageCode = detectLanguage(text) ?? "English"
+        }
+        
+        // 语言代码映射
+        let languageMapping: [String: String] = [
+            "English": "en-US",
+            "Chinese": "zh-CN",
+            "Japanese": "ja-JP",
+            "Korean": "ko-KR",
+            "French": "fr-FR",
+            "German": "de-DE",
+            "Spanish": "es-ES",
+            "Russian": "ru-RU"
+        ]
+        
+        // 获取对应的语言代码
+        let speechLanguage = languageMapping[languageCode] ?? languageMapping[language] ?? "en-US"
+        
+        // 检查是否有可用的语音
+        guard let voice = AVSpeechSynthesisVoice(language: speechLanguage) else {
+            print("No voice available for language: \(speechLanguage)")
+            return
+        }
+        
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = voice
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        utterance.pitchMultiplier = 1.0
+        utterance.volume = 1.0
         
         speechSynthesizer.speak(utterance)
     }
     
-    func getLanguageCode(for language: String) -> String {
-        switch language {
-        case "English": return "en-US"
-        case "Chinese": return "zh-CN"
-        case "Spanish": return "es-ES"
-        case "French": return "fr-FR"
-        case "German": return "de-DE"
-        case "Japanese": return "ja-JP"
-        case "Korean": return "ko-KR"
-        case "Russian": return "ru-RU"
-        case "Italian": return "it-IT"
-        case "Portuguese": return "pt-PT"
-        default: return "en-US"
-        }
+    private func detectLanguage(_ text: String) -> String? {
+        let recognizer = NLLanguageRecognizer()
+        recognizer.processString(text)
+        guard let languageCode = recognizer.dominantLanguage?.rawValue else { return nil }
+        
+        // 将语言代码转换为语言名称
+        let languageMapping: [String: String] = [
+            "en": "English",
+            "zh": "Chinese",
+            "ja": "Japanese",
+            "ko": "Korean",
+            "fr": "French",
+            "de": "German",
+            "es": "Spanish",
+            "ru": "Russian"
+        ]
+        
+        return languageMapping[String(languageCode.prefix(2))]
     }
 }
 
