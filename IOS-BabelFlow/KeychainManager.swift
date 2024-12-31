@@ -33,8 +33,7 @@ class KeychainManager {
             }
             
             if let ascii = char.asciiValue {
-                let shifted = ascii - UInt8(shift)
-                if let decryptedChar = UnicodeScalar(shifted) {
+                if let decryptedChar = UnicodeScalar(Int(ascii) - shift) {
                     decrypted.append(String(decryptedChar))
                 }
             } else {
