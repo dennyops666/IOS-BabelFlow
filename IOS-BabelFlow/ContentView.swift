@@ -21,6 +21,7 @@ struct ContentView: View {
     @State private var showAPIKeyAlert = false
     @State private var lastTranslationTask: Task<Void, Never>?
     @Binding var useCustomAPIKey: Bool
+    @StateObject private var speechRecognizer = SpeechRecognitionManager()
     
     let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
     @State private var speechSynthesizer = AVSpeechSynthesizer()
@@ -151,6 +152,18 @@ struct ContentView: View {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(.gray)
                         }
+                        
+                        Button(action: {
+                            if speechRecognizer.isRecording {
+                                speechRecognizer.stopRecording()
+                            } else {
+                                speechRecognizer.startRecording()
+                            }
+                        }) {
+                            Image(systemName: speechRecognizer.isRecording ? "stop.circle.fill" : "mic.circle.fill")
+                                .foregroundColor(speechRecognizer.isRecording ? .red : .blue)
+                                .font(.title2)
+                        }
                     }
                 }
                 .padding(.horizontal, 12)
@@ -161,6 +174,9 @@ struct ContentView: View {
                     .padding(10)
                     .background(Color.blue.opacity(0.1))
                     .cornerRadius(10)
+                    .onChange(of: speechRecognizer.recognizedText) { newValue in
+                        inputText = newValue
+                    }
                     .onChange(of: inputText) { newValue in
                         // Auto translate after 0.5 seconds of no typing
                         Task {
@@ -278,6 +294,13 @@ struct ContentView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text("Translation has been copied to clipboard")
+        }
+        .alert(isPresented: .constant(speechRecognizer.errorMessage != nil)) {
+            Alert(
+                title: Text("语音识别错误"),
+                message: Text(speechRecognizer.errorMessage ?? "未知错误"),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
     
