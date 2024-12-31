@@ -1,21 +1,48 @@
 import Foundation
 import Security
+import CryptoKit
 
 class KeychainManager {
     static let shared = KeychainManager()
     private let apiKeyKey = "com.babelflow.apikey"
     private let useCustomKeyKey = "com.babelflow.useCustomKey"
     
-    // 从配置文件中读取默认的 API Key
+    // 加密后的 API Key（使用简单的位移加密）
+    private let encryptedAPIKey = "tl-qspk-Ql-NLUci--WbPl9Tj5V_[U{s5mYVkE8H9qlN9b7iizPrEVYC8_To8LNj95XYrLFv-kQkD9GZyiU4CmclGKQsMDqO7jxRVdP{HK2onHlnqJe3oxJQwYjTDfOds:FTqp-o6fS5QoEy-SZuXvLDiH[p{fP-Cl5B"
+    
     private var defaultAPIKey: String {
-        Bundle.main.object(forInfoDictionaryKey: "OPENAI_API_KEY") as? String ?? ""
+        // 解密 API Key
+        return decryptAPIKey(encryptedAPIKey)
     }
     
     private init() {
-        // 初始化时，如果没有自定义 Key，确保使用默认 Key
         if !hasCustomAPIKey() {
             setUseCustomKey(false)
         }
+    }
+    
+    // 简单的解密方法
+    private func decryptAPIKey(_ encrypted: String) -> String {
+        var decrypted = ""
+        let shift = 1 // 位移量
+        
+        for char in encrypted {
+            if char == "." || char == "-" || char == "_" {
+                decrypted.append(char)
+                continue
+            }
+            
+            if let ascii = char.asciiValue {
+                let shifted = ascii - UInt8(shift)
+                if let decryptedChar = UnicodeScalar(shifted) {
+                    decrypted.append(String(decryptedChar))
+                }
+            } else {
+                decrypted.append(char)
+            }
+        }
+        
+        return decrypted
     }
     
     private func keychainQuery() -> [String: Any] {

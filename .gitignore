@@ -36,6 +36,9 @@ IOS-BabelFlow/Config.xcconfig
 *.xcconfig
 !*.xcconfig.template
 
+# Tools directory containing encryption utilities
+Tools/
+
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
