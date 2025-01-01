@@ -36,6 +36,9 @@ IOS-BabelFlow/Config.xcconfig
 *.xcconfig
 !*.xcconfig.template
 
+# API Keys
+config.json
+
 # Tools directory containing encryption utilities
 Tools/
 
