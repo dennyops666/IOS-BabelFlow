@@ -455,6 +455,34 @@ OPENAI_API_KEY = your_api_key_here
   </p>
 </div>
 
+### 翻译主界面
+<div align="center">
+  <img src="./docs/images/screenshots/main_translate.png" alt="翻译主界面" width="300"/>
+  <p>
+    <em>智能语音翻译界面 - 支持多语言实时翻译</em>
+  </p>
+  <ul align="left" style="display: inline-block;">
+    <li>支持自动语言检测</li>
+    <li>实时语音输入和录制</li>
+    <li>文本翻译结果展示</li>
+    <li>快捷操作按钮</li>
+  </ul>
+</div>
+
+### 设置界面
+<div align="center">
+  <img src="./docs/images/screenshots/settings.png" alt="设置界面" width="300"/>
+  <p>
+    <em>个性化设置界面 - 灵活配置应用功能</em>
+  </p>
+  <ul align="left" style="display: inline-block;">
+    <li>默认语言设置</li>
+    <li>API配置选项</li>
+    <li>深色模式切换</li>
+    <li>界面外观设置</li>
+  </ul>
+</div>
+
 ## 📚 详细文档
 
 完整的开发文档位于 `doc/Development_Guide.md`，包含：
