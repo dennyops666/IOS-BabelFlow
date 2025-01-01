@@ -126,9 +126,15 @@ def generate_app_icon():
         base_path = "IOS-BabelFlow/Assets.xcassets/AppIcon.appiconset"
         os.makedirs(base_path, exist_ok=True)
 
-        # 保存处理后的图像
+        # 保存处理后的图像到 Assets.xcassets
         original_path = os.path.join(base_path, "icon_1024x1024.png")
         image.save(original_path, "PNG")
+
+        # 保存到 Resources 目录用于 README
+        resources_path = "Resources"
+        os.makedirs(resources_path, exist_ok=True)
+        readme_icon_path = os.path.join(resources_path, "AppIcon.png")
+        image.save(readme_icon_path, "PNG")
 
         # 创建 Contents.json 文件
         contents = {
@@ -149,7 +155,9 @@ def generate_app_icon():
         with open(os.path.join(base_path, "Contents.json"), "w") as f:
             json.dump(contents, f, indent=2)
 
-        print(f"App icon generated successfully and saved to {original_path}")
+        print(f"App icon generated successfully and saved to:")
+        print(f"1. {original_path} (for Xcode)")
+        print(f"2. {readme_icon_path} (for README)")
         print("Please open your Xcode project to see the new icon")
 
     except Exception as e:
