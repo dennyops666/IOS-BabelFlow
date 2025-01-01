@@ -1,7 +1,7 @@
 # BabelFlow - AI 驱动的智能语音翻译应用
 
 <div align="center">
-  <img src="Resources/AppIcon.png" alt="BabelFlow Logo" width="120"/>
+  <img src="https://raw.githubusercontent.com/dennyops666/IOS-BabelFlow/main/Resources/AppIcon.png" alt="BabelFlow Logo" width="120"/>
   <p>
     <strong>突破语言障碍，连接世界对话</strong>
   </p>
