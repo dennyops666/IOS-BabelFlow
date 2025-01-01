@@ -1,13 +1,109 @@
-//
-//  ContentView.swift
-//  IOS-BabelFlow
-//
-//  Created by Django on 12/25/24.
-//
-
 import SwiftUI
 import AVFoundation
 import NaturalLanguage
+import Speech
+import Combine
+
+class SpeechRecognitionManager: NSObject, ObservableObject {
+    @Published var isRecording = false
+    @Published var recognizedText = ""
+    @Published var errorMessage: String?
+    
+    private var audioEngine = AVAudioEngine()
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
+    private var speechRecognizer: SFSpeechRecognizer?
+    
+    override init() {
+        super.init()
+        setupSpeechRecognizer()
+    }
+    
+    private func setupSpeechRecognizer() {
+        speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+        
+        guard let speechRecognizer = speechRecognizer else {
+            errorMessage = "Speech recognition is not available"
+            return
+        }
+        
+        if !speechRecognizer.isAvailable {
+            errorMessage = "Speech recognition is not currently available"
+        }
+    }
+    
+    func startRecording() {
+        guard !isRecording else { return }
+        
+        // 重置之前的任务
+        if let recognitionTask = recognitionTask {
+            recognitionTask.cancel()
+            self.recognitionTask = nil
+        }
+        
+        // 请求麦克风权限
+        AVAudioSession.sharedInstance().requestRecordPermission { [weak self] allowed in
+            guard let self = self else { return }
+            
+            if !allowed {
+                self.errorMessage = "Microphone access denied"
+                return
+            }
+            
+            self.startRecordingWithPermission()
+        }
+    }
+    
+    private func startRecordingWithPermission() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            
+            recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+            guard let recognitionRequest = recognitionRequest else {
+                errorMessage = "Unable to create recognition request"
+                return
+            }
+            
+            recognitionRequest.shouldReportPartialResults = true
+            
+            let inputNode = audioEngine.inputNode
+            recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    self.errorMessage = error.localizedDescription
+                    self.stopRecording()
+                    return
+                }
+                
+                if let result = result {
+                    self.recognizedText = result.bestTranscription.formattedString
+                }
+            }
+            
+            let recordingFormat = inputNode.outputFormat(forBus: 0)
+            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+                recognitionRequest.append(buffer)
+            }
+            
+            audioEngine.prepare()
+            try audioEngine.start()
+            isRecording = true
+            
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
+    func stopRecording() {
+        audioEngine.stop()
+        audioEngine.inputNode.removeTap(onBus: 0)
+        recognitionRequest?.endAudio()
+        isRecording = false
+    }
+}
 
 struct ContentView: View {
     @State private var inputText = ""
@@ -22,9 +118,14 @@ struct ContentView: View {
     @State private var lastTranslationTask: Task<Void, Never>?
     @Binding var useCustomAPIKey: Bool
     @StateObject private var speechRecognizer = SpeechRecognitionManager()
+    @State private var speechSynthesizer = AVSpeechSynthesizer()
     
     let languages = ["Auto", "English", "Chinese", "Spanish", "French", "German", "Japanese", "Korean", "Russian", "Italian", "Portuguese"]
-    @State private var speechSynthesizer = AVSpeechSynthesizer()
+    
+    init(useCustomAPIKey: Binding<Bool>) {
+        _useCustomAPIKey = useCustomAPIKey
+        _speechRecognizer = StateObject(wrappedValue: SpeechRecognitionManager())
+    }
     
     private var translationService: TranslationService {
         TranslationService(apiKey: KeychainManager.shared.getAPIKey() ?? "")
@@ -104,13 +205,35 @@ struct ContentView: View {
             }
             
             // Input Area
-            VStack(spacing: 0) {
+            VStack(alignment: .leading) {
                 HStack {
                     Text("Please enter text to translate.")
                         .font(.caption)
                         .foregroundColor(.gray)
                     Spacer()
                     HStack(spacing: 8) {
+                        Button(action: {
+                            if speechRecognizer.isRecording {
+                                speechRecognizer.stopRecording()
+                            } else {
+                                speechRecognizer.startRecording()
+                            }
+                        }) {
+                            Image(systemName: speechRecognizer.isRecording ? "mic.fill" : "mic")
+                                .foregroundColor(speechRecognizer.isRecording ? .red : .blue)
+                        }
+                        .buttonStyle(.borderless)
+                        .disabled(isLoading)
+                        .alert(isPresented: .constant(speechRecognizer.errorMessage != nil)) {
+                            Alert(
+                                title: Text("提示"),
+                                message: Text(speechRecognizer.errorMessage ?? ""),
+                                dismissButton: .default(Text("确定")) {
+                                    speechRecognizer.errorMessage = nil
+                                }
+                            )
+                        }
+                        
                         Button(action: {
                             if !inputText.isEmpty {
                                 speakText(inputText, language: sourceLanguage)
@@ -144,26 +267,14 @@ struct ContentView: View {
                         .disabled(inputText.isEmpty)
                         
                         Button(action: {
-                            speechSynthesizer.stopSpeaking(at: .immediate)
-                            isPaused = false
                             inputText = ""
                             translatedText = ""
                         }) {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(.gray)
                         }
-                        
-                        Button(action: {
-                            if speechRecognizer.isRecording {
-                                speechRecognizer.stopRecording()
-                            } else {
-                                speechRecognizer.startRecording()
-                            }
-                        }) {
-                            Image(systemName: speechRecognizer.isRecording ? "stop.circle.fill" : "mic.circle.fill")
-                                .foregroundColor(speechRecognizer.isRecording ? .red : .blue)
-                                .font(.title2)
-                        }
+                        .buttonStyle(.borderless)
+                        .disabled(isLoading)
                     }
                 }
                 .padding(.horizontal, 12)
@@ -174,9 +285,6 @@ struct ContentView: View {
                     .padding(10)
                     .background(Color.blue.opacity(0.1))
                     .cornerRadius(10)
-                    .onChange(of: speechRecognizer.recognizedText) { newValue in
-                        inputText = newValue
-                    }
                     .onChange(of: inputText) { newValue in
                         // Auto translate after 0.5 seconds of no typing
                         Task {
@@ -295,12 +403,16 @@ struct ContentView: View {
         } message: {
             Text("Translation has been copied to clipboard")
         }
-        .alert(isPresented: .constant(speechRecognizer.errorMessage != nil)) {
-            Alert(
-                title: Text("语音识别错误"),
-                message: Text(speechRecognizer.errorMessage ?? "未知错误"),
-                dismissButton: .default(Text("OK"))
-            )
+        .onChange(of: speechRecognizer.recognizedText) { newValue in
+            handleSpeechRecognizedText()
+        }
+    }
+    
+    private func handleSpeechRecognizedText() {
+        if !speechRecognizer.recognizedText.isEmpty {
+            inputText = speechRecognizer.recognizedText
+            // 重置识别的文本，避免重复
+            speechRecognizer.recognizedText = ""
         }
     }
     
