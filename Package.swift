@@ -17,7 +17,10 @@ let package = Package(
     targets: [
         .target(
             name: "IOS-BabelFlow",
-            dependencies: ["KeychainAccess"]),
+            dependencies: ["KeychainAccess"],
+            resources: [
+                .process("Resources")
+            ]),
         .testTarget(
             name: "IOS-BabelFlowTests",
             dependencies: ["IOS-BabelFlow"]),
