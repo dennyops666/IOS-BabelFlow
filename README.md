@@ -445,6 +445,16 @@ OPENAI_API_KEY = your_api_key_here
 - **收藏翻译**：点击星标收藏
 - **分享功能**：点击分享按钮导出
 
+## 🖼 界面预览
+
+### 启动界面
+<div align="center">
+  <img src="./docs/images/screenshots/launch_screen.png" alt="启动界面" width="300"/>
+  <p>
+    <em>BabelFlow 启动界面 - 简洁优雅的设计风格</em>
+  </p>
+</div>
+
 ## 📚 详细文档
 
 完整的开发文档位于 `doc/Development_Guide.md`，包含：
