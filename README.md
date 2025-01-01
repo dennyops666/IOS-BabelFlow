@@ -1,7 +1,7 @@
 # BabelFlow - AI 驱动的智能语音翻译应用
 
 <div align="center">
-  <img src="./Resources/AppIcon.png" alt="BabelFlow Logo" width="120"/>
+  <img src="Resources/AppIcon.png" alt="BabelFlow Logo" width="120"/>
   <p>
     <strong>突破语言障碍，连接世界对话</strong>
   </p>
@@ -180,7 +180,7 @@ IOS-BabelFlow/
 ### 整体架构
 
 <div align="center">
-  <img src="./docs/images/architecture.svg" alt="BabelFlow Architecture" width="800"/>
+  <img src="docs/images/architecture.svg" alt="BabelFlow Architecture" width="800"/>
 </div>
 
 BabelFlow 采用清晰的三层架构设计：
@@ -230,7 +230,7 @@ BabelFlow 采用清晰的三层架构设计：
 ### 数据流程
 
 <div align="center">
-  <img src="./docs/images/dataflow.svg" alt="BabelFlow Data Flow" width="800"/>
+  <img src="docs/images/dataflow.svg" alt="BabelFlow Data Flow" width="800"/>
 </div>
 
 #### 语音翻译流程
@@ -305,7 +305,7 @@ BabelFlow 采用清晰的三层架构设计：
 ### 安全架构
 
 <div align="center">
-  <img src="./docs/images/security.svg" alt="BabelFlow Security Architecture" width="800"/>
+  <img src="docs/images/security.svg" alt="BabelFlow Security Architecture" width="800"/>
 </div>
 
 #### 1. 应用层安全
@@ -341,7 +341,7 @@ BabelFlow 采用清晰的三层架构设计：
 ### 性能优化
 
 <div align="center">
-  <img src="./docs/images/performance.svg" alt="BabelFlow Performance Architecture" width="800"/>
+  <img src="docs/images/performance.svg" alt="BabelFlow Performance Architecture" width="800"/>
 </div>
 
 #### 1. 资源管理
@@ -449,7 +449,7 @@ OPENAI_API_KEY = your_api_key_here
 
 ### 启动界面
 <div align="center">
-  <img src="./docs/images/screenshots/launch_screen.png" alt="启动界面" width="300"/>
+  <img src="docs/images/screenshots/launch_screen.png" alt="启动界面" width="300"/>
   <p>
     <em>BabelFlow 启动界面 - 简洁优雅的设计风格</em>
   </p>
@@ -457,7 +457,7 @@ OPENAI_API_KEY = your_api_key_here
 
 ### 翻译主界面
 <div align="center">
-  <img src="./docs/images/screenshots/main_translate.png" alt="翻译主界面" width="300"/>
+  <img src="docs/images/screenshots/main_translate.png" alt="翻译主界面" width="300"/>
   <p>
     <em>智能语音翻译界面 - 支持多语言实时翻译</em>
   </p>
@@ -471,7 +471,7 @@ OPENAI_API_KEY = your_api_key_here
 
 ### 设置界面
 <div align="center">
-  <img src="./docs/images/screenshots/settings.png" alt="设置界面" width="300"/>
+  <img src="docs/images/screenshots/settings.png" alt="设置界面" width="300"/>
   <p>
     <em>个性化设置界面 - 灵活配置应用功能</em>
   </p>
