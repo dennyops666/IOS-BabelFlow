@@ -1,64 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        @media (prefers-color-scheme: dark) {
+            .text { fill: #ffffff; }
+            .box-border { stroke: #ffffff; }
+        }
+    </style>
+    
     <!-- 标题 -->
-    <text x="50" y="50" font-size="24" font-weight="bold">数据流程</text>
+    <text x="50" y="50" font-size="24" fill="#ffffff" class="text">数据流程</text>
+    <text x="50" y="90" font-size="18" fill="#ffffff" class="text">语音翻译数据流</text>
     
-    <!-- 主标题 -->
-    <text x="250" y="100" font-size="20" text-anchor="middle">语音翻译数据流</text>
+    <!-- 第一行 -->
+    <g transform="translate(50,150)">
+        <rect width="200" height="60" fill="#1a365d" rx="5" class="box-border" stroke="#ffffff" stroke-width="1"/>
+        <text x="30" y="35" font-size="14" fill="#ffffff" class="text">1. 用户开始录音</text>
+    </g>
     
-    <!-- 流程图主体 -->
-    <g transform="translate(150,150)">
-        <!-- 第一行 -->
-        <g transform="translate(0,0)">
-            <rect width="150" height="50" fill="#E3F2FD" rx="5"/>
-            <text x="75" y="30" text-anchor="middle">1. 用户开始录音</text>
-        </g>
+    <g transform="translate(300,150)">
+        <rect width="200" height="60" fill="#1c4532" rx="5" class="box-border" stroke="#ffffff" stroke-width="1"/>
+        <text x="50" y="35" font-size="14" fill="#ffffff" class="text">2. 音频录制</text>
+    </g>
+    
+    <g transform="translate(550,150)">
+        <rect width="200" height="60" fill="#553c9a" rx="5" class="box-border" stroke="#ffffff" stroke-width="1"/>
+        <text x="50" y="35" font-size="14" fill="#ffffff" class="text">3. 波形显示</text>
+    </g>
+    
+    <!-- 第二行 -->
+    <g transform="translate(50,300)">
+        <rect width="200" height="60" fill="#1a365d" rx="5" class="box-border" stroke="#ffffff" stroke-width="1"/>
+        <text x="50" y="35" font-size="14" fill="#ffffff" class="text">4. 语音识别</text>
+    </g>
+    
+    <g transform="translate(300,300)">
+        <rect width="200" height="60" fill="#744210" rx="5" class="box-border" stroke="#ffffff" stroke-width="1"/>
+        <text x="45" y="35" font-size="14" fill="#ffffff" class="text">5. OpenAI翻译</text>
+    </g>
+    
+    <g transform="translate(550,300)">
+        <rect width="200" height="60" fill="#1c4532" rx="5" class="box-border" stroke="#ffffff" stroke-width="1"/>
+        <text x="50" y="35" font-size="14" fill="#ffffff" class="text">6. 显示结果</text>
+    </g>
+    
+    <!-- 第三行 -->
+    <g transform="translate(300,450)">
+        <rect width="200" height="60" fill="#553c9a" rx="5" class="box-border" stroke="#ffffff" stroke-width="1"/>
+        <text x="50" y="35" font-size="14" fill="#ffffff" class="text">7. 保存历史</text>
+    </g>
+    
+    <!-- 连接箭头 -->
+    <g stroke="#ffffff" stroke-width="2" fill="none">
+        <!-- 横向箭头 -->
+        <path d="M250,180 L290,180 M280,170 L290,180 L280,190" />
+        <path d="M500,180 L540,180 M530,170 L540,180 L530,190" />
         
-        <g transform="translate(200,0)">
-            <rect width="150" height="50" fill="#E8F5E9" rx="5"/>
-            <text x="75" y="30" text-anchor="middle">2. 音频录制</text>
-        </g>
+        <path d="M250,330 L290,330 M280,320 L290,330 L280,340" />
+        <path d="M500,330 L540,330 M530,320 L540,330 L530,340" />
         
-        <g transform="translate(400,0)">
-            <rect width="150" height="50" fill="#F3E5F5" rx="5"/>
-            <text x="75" y="30" text-anchor="middle">3. 波形显示</text>
-        </g>
+        <!-- 纵向箭头 -->
+        <path d="M150,210 L150,290 M140,280 L150,290 L160,280" />
+        <path d="M400,210 L400,290 M390,280 L400,290 L410,280" />
+        <path d="M650,210 L650,290 M640,280 L650,290 L660,280" />
         
-        <!-- 第二行 -->
-        <g transform="translate(0,100)">
-            <rect width="150" height="50" fill="#E8EAF6" rx="5"/>
-            <text x="75" y="30" text-anchor="middle">4. 语音识别</text>
-        </g>
-        
-        <g transform="translate(200,100)">
-            <rect width="150" height="50" fill="#FFF3E0" rx="5"/>
-            <text x="75" y="30" text-anchor="middle">5. OpenAI翻译</text>
-        </g>
-        
-        <g transform="translate(400,100)">
-            <rect width="150" height="50" fill="#EFEBE9" rx="5"/>
-            <text x="75" y="30" text-anchor="middle">6. 显示结果</text>
-        </g>
-        
-        <!-- 第三行 -->
-        <g transform="translate(200,200)">
-            <rect width="150" height="50" fill="#E0F2F1" rx="5"/>
-            <text x="75" y="30" text-anchor="middle">7. 保存历史</text>
-        </g>
-        
-        <!-- 连接线 -->
-        <g stroke="#666" stroke-width="2">
-            <!-- 横向连接 -->
-            <line x1="150" y1="25" x2="200" y2="25"/>
-            <line x1="350" y1="25" x2="400" y2="25"/>
-            <line x1="150" y1="125" x2="200" y2="125"/>
-            <line x1="350" y1="125" x2="400" y2="125"/>
-            
-            <!-- 纵向连接 -->
-            <line x1="75" y1="50" x2="75" y2="100"/>
-            <line x1="275" y1="50" x2="275" y2="100"/>
-            <line x1="475" y1="50" x2="475" y2="100"/>
-            <line x1="275" y1="150" x2="275" y2="200"/>
-        </g>
+        <!-- 到保存历史的箭头 -->
+        <path d="M400,360 L400,440 M390,430 L400,440 L410,430" />
     </g>
 </svg>
