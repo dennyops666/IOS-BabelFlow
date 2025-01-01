@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <!-- 标题 -->
+    <text x="50" y="50" font-size="24" font-weight="bold">安全架构</text>
+    
+    <!-- 主体架构 -->
+    <g transform="translate(150,100)">
+        <!-- 应用层安全 -->
+        <g transform="translate(0,0)">
+            <rect width="150" height="150" fill="#E8EAF6" rx="5"/>
+            <text x="75" y="30" text-anchor="middle" font-weight="bold">应用层安全</text>
+            
+            <rect x="15" y="50" width="120" height="35" fill="#C5CAE9" rx="5"/>
+            <text x="75" y="72" text-anchor="middle">生物认证</text>
+            
+            <rect x="15" y="95" width="120" height="35" fill="#C5CAE9" rx="5"/>
+            <text x="75" y="117" text-anchor="middle">数据加密</text>
+        </g>
+        
+        <!-- 网络层安全 -->
+        <g transform="translate(200,0)">
+            <rect width="150" height="150" fill="#E0F2F1" rx="5"/>
+            <text x="75" y="30" text-anchor="middle" font-weight="bold">网络层安全</text>
+            
+            <rect x="15" y="50" width="120" height="35" fill="#B2DFDB" rx="5"/>
+            <text x="75" y="72" text-anchor="middle">SSL/TLS</text>
+            
+            <rect x="15" y="95" width="120" height="35" fill="#B2DFDB" rx="5"/>
+            <text x="75" y="117" text-anchor="middle">API认证</text>
+        </g>
+        
+        <!-- 存储层安全 -->
+        <g transform="translate(400,0)">
+            <rect width="150" height="150" fill="#FFF3E0" rx="5"/>
+            <text x="75" y="30" text-anchor="middle" font-weight="bold">存储层安全</text>
+            
+            <rect x="15" y="50" width="120" height="35" fill="#FFE0B2" rx="5"/>
+            <text x="75" y="72" text-anchor="middle">Keychain存储</text>
+            
+            <rect x="15" y="95" width="120" height="35" fill="#FFE0B2" rx="5"/>
+            <text x="75" y="117" text-anchor="middle">数据加密存储</text>
+        </g>
+        
+        <!-- 安全监控 -->
+        <g transform="translate(0,200)">
+            <rect width="550" height="100" fill="#F3E5F5" rx="5"/>
+            <text x="275" y="30" text-anchor="middle" font-weight="bold">安全监控</text>
+            
+            <rect x="20" y="50" width="150" height="35" fill="#E1BEE7" rx="5"/>
+            <text x="95" y="72" text-anchor="middle">异常检测</text>
+            
+            <rect x="200" y="50" width="150" height="35" fill="#E1BEE7" rx="5"/>
+            <text x="275" y="72" text-anchor="middle">日志审计</text>
+            
+            <rect x="380" y="50" width="150" height="35" fill="#E1BEE7" rx="5"/>
+            <text x="455" y="72" text-anchor="middle">安全报告</text>
+        </g>
+        
+        <!-- 连接线 -->
+        <g stroke="#666" stroke-width="2">
+            <line x1="75" y1="150" x2="75" y2="200"/>
+            <line x1="275" y1="150" x2="275" y2="200"/>
+            <line x1="475" y1="150" x2="475" y2="200"/>
+        </g>
+    </g>
+</svg>

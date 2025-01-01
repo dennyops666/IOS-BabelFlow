@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <!-- 标题 -->
+    <text x="50" y="50" font-size="24" font-weight="bold">数据流程</text>
+    
+    <!-- 主标题 -->
+    <text x="250" y="100" font-size="20" text-anchor="middle">语音翻译数据流</text>
+    
+    <!-- 流程图主体 -->
+    <g transform="translate(150,150)">
+        <!-- 第一行 -->
+        <g transform="translate(0,0)">
+            <rect width="150" height="50" fill="#E3F2FD" rx="5"/>
+            <text x="75" y="30" text-anchor="middle">1. 用户开始录音</text>
+        </g>
+        
+        <g transform="translate(200,0)">
+            <rect width="150" height="50" fill="#E8F5E9" rx="5"/>
+            <text x="75" y="30" text-anchor="middle">2. 音频录制</text>
+        </g>
+        
+        <g transform="translate(400,0)">
+            <rect width="150" height="50" fill="#F3E5F5" rx="5"/>
+            <text x="75" y="30" text-anchor="middle">3. 波形显示</text>
+        </g>
+        
+        <!-- 第二行 -->
+        <g transform="translate(0,100)">
+            <rect width="150" height="50" fill="#E8EAF6" rx="5"/>
+            <text x="75" y="30" text-anchor="middle">4. 语音识别</text>
+        </g>
+        
+        <g transform="translate(200,100)">
+            <rect width="150" height="50" fill="#FFF3E0" rx="5"/>
+            <text x="75" y="30" text-anchor="middle">5. OpenAI翻译</text>
+        </g>
+        
+        <g transform="translate(400,100)">
+            <rect width="150" height="50" fill="#EFEBE9" rx="5"/>
+            <text x="75" y="30" text-anchor="middle">6. 显示结果</text>
+        </g>
+        
+        <!-- 第三行 -->
+        <g transform="translate(200,200)">
+            <rect width="150" height="50" fill="#E0F2F1" rx="5"/>
+            <text x="75" y="30" text-anchor="middle">7. 保存历史</text>
+        </g>
+        
+        <!-- 连接线 -->
+        <g stroke="#666" stroke-width="2">
+            <!-- 横向连接 -->
+            <line x1="150" y1="25" x2="200" y2="25"/>
+            <line x1="350" y1="25" x2="400" y2="25"/>
+            <line x1="150" y1="125" x2="200" y2="125"/>
+            <line x1="350" y1="125" x2="400" y2="125"/>
+            
+            <!-- 纵向连接 -->
+            <line x1="75" y1="50" x2="75" y2="100"/>
+            <line x1="275" y1="50" x2="275" y2="100"/>
+            <line x1="475" y1="50" x2="475" y2="100"/>
+            <line x1="275" y1="150" x2="275" y2="200"/>
+        </g>
+    </g>
+</svg>

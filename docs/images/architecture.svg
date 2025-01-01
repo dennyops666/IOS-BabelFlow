@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <!-- 标题 -->
+    <text x="50" y="50" font-size="24">整体架构</text>
+    
+    <!-- 表示层 -->
+    <g transform="translate(250,100)">
+        <rect width="300" height="100" fill="#F0F8FF" rx="5"/>
+        <text x="20" y="35" font-size="16">表示层 (Presentation Layer)</text>
+        
+        <rect x="20" y="50" width="120" height="35" fill="#87CEEB" rx="5"/>
+        <text x="35" y="73" font-size="14">SwiftUI Views</text>
+        
+        <rect x="160" y="50" width="120" height="35" fill="#87CEEB" rx="5"/>
+        <text x="175" y="73" font-size="14">View Models</text>
+    </g>
+
+    <!-- 业务层 -->
+    <g transform="translate(250,250)">
+        <rect width="300" height="160" fill="#F0FFF0" rx="5"/>
+        <text x="20" y="35" font-size="16">业务层 (Business Layer)</text>
+        
+        <rect x="20" y="50" width="120" height="35" fill="#98FB98" rx="5"/>
+        <text x="25" y="73" font-size="14">TranslationManager</text>
+        
+        <rect x="160" y="50" width="120" height="35" fill="#98FB98" rx="5"/>
+        <text x="175" y="73" font-size="14">AudioManager</text>
+        
+        <rect x="20" y="100" width="120" height="35" fill="#98FB98" rx="5"/>
+        <text x="25" y="123" font-size="14">LanguageManager</text>
+        
+        <rect x="160" y="100" width="120" height="35" fill="#98FB98" rx="5"/>
+        <text x="175" y="123" font-size="14">HistoryManager</text>
+    </g>
+
+    <!-- 数据层 -->
+    <g transform="translate(250,460)">
+        <rect width="300" height="100" fill="#FFF5EE" rx="5"/>
+        <text x="20" y="35" font-size="16">数据层 (Data Layer)</text>
+        
+        <rect x="20" y="50" width="80" height="35" fill="#FFDAB9" rx="5"/>
+        <text x="25" y="73" font-size="14">OpenAI API</text>
+        
+        <rect x="110" y="50" width="80" height="35" fill="#FFDAB9" rx="5"/>
+        <text x="120" y="73" font-size="14">CoreData</text>
+        
+        <rect x="200" y="50" width="80" height="35" fill="#FFDAB9" rx="5"/>
+        <text x="210" y="73" font-size="14">Keychain</text>
+    </g>
+
+    <!-- 箭头连接 -->
+    <!-- 表示层到业务层的箭头 -->
+    <path d="M400,200 L400,240 L405,235 M400,240 L395,235" stroke="black" stroke-width="1.5" fill="none"/>
+    
+    <!-- 业务层到数据层的箭头 -->
+    <path d="M400,410 L400,450 L405,445 M400,450 L395,445" stroke="black" stroke-width="1.5" fill="none"/>
+</svg>
